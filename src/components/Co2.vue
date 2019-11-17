@@ -25,7 +25,7 @@
     },
      methods: {
       fillData () {
-      axios.get('http://localhost:3000/airquality?last=50')
+      axios.get('http://localhost:3000/fe%3A1f%3Aa1%3A94%3Ac8%3A20/airquality?last=50')
       .then(response => {
           this.co2s = response.data.map(CO2 => CO2.CO2)
           this.co2times = response.data.map(timestamp => moment(timestamp.timestamp).format('MMMM Do YYYY, h:mm:ss a'))
