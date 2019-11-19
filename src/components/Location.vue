@@ -1,37 +1,39 @@
 <template>
-  <div class="medium">
-    <div v-if="errorStr">
-      Sorry, but the following error
-      occurred: {{errorStr}}
-    </div>
-    <div v-if="location && place">
-      Your current location is: {{place}}
-    </div>
-    <div v-if="airQuality">
-      <h5>Air Quality</h5>
-      <ul>
-        <li v-for="item in airQuality" v-bind:key="item.name">
-          <div>{{ item.name }}, valuePPB: {{ item.valuePPB }}, valueUGM3: {{ item.valueUGM3}}, AQI: {{ item.aqi}} , Status: {{ item.category}}</div>
-        </li>
-      </ul>
-    </div>
-    <h6>Source: http://api.aerisapi.com</h6>    
-    <div v-if="weatherParams">
-      <h5>Conditions Parameters</h5>
-      <ul>
-        <li>
-          Temperature: {{weatherParams.temp}}
-        </li>
-        <li>
-          Pressure: {{weatherParams.pressure}}
-        </li>
-        <li>
-          Humidity: {{weatherParams.humidity}}
-        </li>
-      </ul>
-    </div>
-    <h6>Source: http://api.openweathermap.org</h6>
-  </div>
+  <b-container  >
+    <b-alert v-model="error" variant="danger" dismissible>
+      Sorry, but the following error occurred: {{errorStr}}
+    </b-alert>
+    <b-row v-if="location && place">
+      <b-col class="text-center"><h5 >Your current location is: {{place}}</h5></b-col>      
+    </b-row>
+    <b-row>
+      <b-col v-if="airQuality">
+        <h5>Air Quality</h5>
+        <b-table striped hover :items="airQuality"></b-table>
+        <b-link href="http://api.aerisapi.com">http://api.aerisapi.com</b-link>
+      </b-col>
+      <b-col v-if="weatherParams">  
+        <h5>Conditions Parameters</h5>
+        <b-list-group>
+          <b-list-group-item class="d-flex justify-content-between align-items-center">
+            Temperature 
+            <b-badge variant="primary" pill>{{weatherParams.temp}}</b-badge>
+          </b-list-group-item>
+
+          <b-list-group-item class="d-flex justify-content-between align-items-center">
+            Pressure 
+            <b-badge variant="success" pill>{{weatherParams.pressure}}</b-badge>
+          </b-list-group-item>
+
+          <b-list-group-item class="d-flex justify-content-between align-items-center">
+            Humidity 
+            <b-badge variant="warning" pill>{{weatherParams.humidity}}</b-badge>
+          </b-list-group-item>
+        </b-list-group>
+        <b-link href="http://api.openweathermap.org">http://api.openweathermap.org</b-link>
+      </b-col>
+    </b-row>
+  </b-container >
 </template>
 
 <script>
@@ -43,6 +45,7 @@ export default {
     return {
       location: null,
       errorStr: null,
+      error: false,
       airQuality: null,
       weatherParams: null,
       place: null
@@ -52,6 +55,7 @@ export default {
     //do we support geolocation
     if (!("geolocation" in navigator)) {
       this.errorStr = "Geolocation is not available.";
+      this.error = "true";
       return;
     }
 
@@ -65,6 +69,7 @@ export default {
       },
       err => {
         this.errorStr = err.message;
+        this.error = true;
       }
     );
   },
@@ -78,7 +83,14 @@ export default {
           .then(response => 
             this.airQuality = response.data.response[0].periods[0].pollutants.map(item =>
               item
-            ).filter(x => x.type != "pm10" && x.type != "pm2.5")
+            ).filter(x => x.type != "pm10" && x.type != "pm2.5" && x.type).map(y => {
+              const parameter = {};
+              parameter["Parameter"] = y.name;
+              parameter["PPB"] = y.valuePPB;
+              parameter["UGM3"] = y.valueUGM3; 
+              parameter["AQI"] = y.aqi; 
+              return parameter;
+            })
           );
       } catch (e) {
         console.error(e);
@@ -104,9 +116,4 @@ export default {
 </script>
 
 <style>
-.small {
-  max-width: 1000px auto;
-  margin: 50px auto;
-  float: right;
-}
 </style>

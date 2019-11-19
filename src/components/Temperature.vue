@@ -2,7 +2,7 @@
   <div class="small">
     <label id="tempLabel" style="display: none"></label>
     <bar-chart :chart-data="datacollection"></bar-chart>
-    <button @click="fillData()">Get temperature data</button>
+    <b-button @click="fillData()" variant="primary" size="sm">Get T°</b-button>
   </div>
 </template>
 
@@ -65,7 +65,7 @@ export default {
 <style>
 .small {
   max-width: 1000px auto;
-  margin: 50px auto;
+  margin: 10px auto;
   float: right;
 }
 </style>

@@ -2,7 +2,7 @@
   <div class="small">
     <label id="CO2Label" style="display: none"></label>
     <bar-chart onload="fillData()" :chart-data="datacollection"></bar-chart>
-    <button @click="fillData()">Get CO2 data</button>
+    <b-button @click="fillData()" variant="primary" size="sm">Get CO2</b-button>
   </div>
 </template>
 
@@ -48,8 +48,8 @@
 
 <style>
   .small {
-      max-width: 1000px auto;
-    margin:  50px auto;
+    max-width: 1000px auto;
+    margin:  10px auto;
     float: left;
   }
 </style>
