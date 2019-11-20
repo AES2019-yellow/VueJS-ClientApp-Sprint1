@@ -2,7 +2,7 @@
   <div class="small">
     <label id="CO2Label" style="display: none"></label>
     <bar-chart onload="fillData()" :chart-data="datacollection"></bar-chart>
-    <button @click="fillData()">Get CO2 data</button>
+    <b-button @click="fillData()" variant="primary" size="sm">Get CO2</b-button>
   </div>
 </template>
 
@@ -25,7 +25,7 @@
     },
      methods: {
       fillData () {
-      axios.get('http://localhost:3000/airquality?last=50')
+      axios.get('http://localhost:3000/fe%3A1f%3Aa1%3A94%3Ac8%3A20/airquality?last=50')
       .then(response => {
           this.co2s = response.data.map(CO2 => CO2.CO2)
           this.co2times = response.data.map(timestamp => moment(timestamp.timestamp).format('MMMM Do YYYY, h:mm:ss a'))
@@ -48,8 +48,8 @@
 
 <style>
   .small {
-      max-width: 1000px auto;
-    margin:  50px auto;
+    max-width: 1000px auto;
+    margin:  10px auto;
     float: left;
   }
 </style>
