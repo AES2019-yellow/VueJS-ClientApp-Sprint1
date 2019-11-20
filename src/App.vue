@@ -4,8 +4,9 @@
       <b-col class="text-center"><h2 >Automatic Suffocation Detection System - Sprint2</h2></b-col>      
     </b-row>
     <b-row class="text-center">
-      <b-col><temperature /></b-col>
-      <b-col><co2 /></b-col>
+      <b-col md="4"><temperature /></b-col>
+      <b-col md="4"><co2 /></b-col>
+      <b-col md="4"><pressure /></b-col>
     </b-row>
     <hr>
     <b-row>
@@ -17,6 +18,7 @@
 <script>
 import Temperature from "./components/Temperature.vue";
 import Co2 from "./components/Co2";
+import Pressure from "./components/Pressure";
 import Location from "./components/Location";
 
 export default {
@@ -24,6 +26,7 @@ export default {
   components: {
     Temperature,
     Co2,
+    Pressure,
     Location
   },
   data() {

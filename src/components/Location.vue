@@ -4,7 +4,8 @@
       Sorry, but the following error occurred: {{errorStr}}
     </b-alert>
     <b-row v-if="location && place">
-      <b-col class="text-center"><h5 >Your current location is: {{place}}</h5></b-col>      
+      <b-col class="text-center"><h5 >Your current location is: {{place}}</h5></b-col>  
+      <b-button @click="fillData()" pill variant="primary" size="sm">Refresh</b-button>    
     </b-row>
     <b-row>
       <b-col v-if="airQuality">
@@ -17,17 +18,17 @@
         <b-list-group>
           <b-list-group-item class="d-flex justify-content-between align-items-center">
             Temperature 
-            <b-badge variant="primary" pill>{{weatherParams.temp}}</b-badge>
+            <b-badge variant="primary">{{weatherParams.temp}} {{IS_CELSIUS? "°c":"°k"}}</b-badge>
           </b-list-group-item>
 
           <b-list-group-item class="d-flex justify-content-between align-items-center">
             Pressure 
-            <b-badge variant="success" pill>{{weatherParams.pressure}}</b-badge>
+            <b-badge variant="success">{{weatherParams.pressure}} hPa</b-badge>
           </b-list-group-item>
 
           <b-list-group-item class="d-flex justify-content-between align-items-center">
             Humidity 
-            <b-badge variant="warning" pill>{{weatherParams.humidity}}</b-badge>
+            <b-badge variant="warning">{{weatherParams.humidity}}</b-badge>
           </b-list-group-item>
         </b-list-group>
         <b-link href="http://api.openweathermap.org">http://api.openweathermap.org</b-link>
@@ -48,7 +49,8 @@ export default {
       error: false,
       airQuality: null,
       weatherParams: null,
-      place: null
+      place: null,
+      IS_CELSIUS:true
     };
   },
   created() {
@@ -103,6 +105,10 @@ export default {
             `http://api.openweathermap.org/data/2.5/weather?lat=${location.coords.latitude}&lon=${location.coords.longitude}&APPID=8f343836a14787d4573a0daabf48adc0`
           )
           .then(response =>{
+            // Kelvin to celcius
+              if(response.data.main.temp && this.IS_CELSIUS){
+                response.data.main.temp = (response.data.main.temp - 273.15).toFixed(2);
+              }
               this.weatherParams = response.data.main;
               this.place = response.data.name
             }

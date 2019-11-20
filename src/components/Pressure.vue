@@ -1,8 +1,8 @@
 <template>
   <div class="small">
-    <label id="tempLabel" style="display: none"></label>
+    <label id="pressLabel" style="display: none"></label>
     <bar-chart :chart-data="datacollection"></bar-chart>
-    <b-button @click="fillData()" variant="primary" size="sm">Get T°</b-button>
+    <b-button @click="fillData()" variant="primary" size="sm">Get Pres</b-button>
   </div>
 </template>
 
@@ -29,31 +29,31 @@ export default {
       try {
         axios
           .get(
-            "http://localhost:3000/fe%3A1f%3Aa1%3A94%3Ac8%3A20/temperature?last=30"
+            "http://localhost:3000/fe%3A1f%3Aa1%3A94%3Ac8%3A20/pressure?last=30"
           )
           .then(response => {
-            this.temps = response.data.map(temperature =>
-              parseFloat(temperature.temperature)
+            this.press = response.data.map(pressure =>
+              parseFloat(pressure.pressure)
             );
-            this.temptimes = response.data.map(timestamp =>
+            this.presstimes = response.data.map(timestamp =>
               moment(timestamp.timestamp).format("MMMM Do YYYY, h:mm:ss a")
             );
-            //  console.log(this.temps)
+            //  console.log(this.press)
           });
 
         this.datacollection = {
-          labels: this.temptimes,
+          labels: this.presstimes,
           datasets: [
             {
-              label: "Temperature",
-              backgroundColor: "#69caf0",
-              data: this.temps
+              label: "Pressure",
+              backgroundColor: "#33cc33",
+              data: this.press
             }
           ]
         };
-        document.getElementById("tempLabel").style.display = "block";
-        document.getElementById("tempLabel").innerHTML =
-          "Current Temperature: " + this.temps[this.temps.length - 1];
+        document.getElementById("pressLabel").style.display = "block";
+        document.getElementById("pressLabel").innerHTML =
+          "Current Pressure: " + this.press[this.press.length - 1];
       } catch (e) {
         console.error(e);
       }
@@ -66,6 +66,6 @@ export default {
 .small {
   max-width: 800px auto;
   margin: 10px auto;
-  float: right;
+  float: left;
 }
 </style>
