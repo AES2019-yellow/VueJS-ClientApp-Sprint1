@@ -6,7 +6,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state:{
-        token: null
+        token: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAZXhhbXBsZS5jb20iLCJpYXQiOjE1NzQ1MjI2ODksImV4cCI6MTU3NDU0NDI4OX0.gKedQiHONGrppjQEf988Jrce7IomSQsdsS-DHzTecic",
+
     },
     mutations: {
         updateToken(state, newtoken){

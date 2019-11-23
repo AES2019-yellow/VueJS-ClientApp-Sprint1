@@ -27,8 +27,7 @@ export default {
         ]
       },
       device: null,
-      token:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJkb3JhZG8xMTIiLCJlbWFpbCI6ImRvcmFkb0Bjb3JyZW8uY29tIiwiaWF0IjoxNTc0NDUxMTM5LCJleHAiOjE1NzQ0NzI3Mzl9.LFvfxOcEdJAYxpLtUCa6o12YVf7OXKOGeyz058LnUnA"
+      token: this.$store.state.token
     };
   },
   mounted() {
@@ -50,23 +49,24 @@ export default {
       }
     },
 
-    plot(device) {
+    async plot(device) {
       try {
         const headers = {
           Authorization: this.token
         };
-        axios
-          .get(`http://localhost:3000/${device}/temperature?last=30`, {
+        let response = await axios.get(
+          `http://localhost:3000/${device}/temperature?last=30`,
+          {
             headers
-          })
-          .then(response => {
-            this.temps = response.data.map(temperature =>
-              parseFloat(temperature.temperature)
-            );
-            this.temptimes = response.data.map(timestamp =>
-              moment(timestamp.timestamp).format("MMMM Do YYYY, h:mm:ss a")
-            );
-          });
+          }
+        );
+
+        this.temps = response.data.map(temperature =>
+          parseFloat(temperature.temperature)
+        );
+        this.temptimes = response.data.map(timestamp =>
+          moment(timestamp.timestamp).format("MMMM Do YYYY, h:mm:ss a")
+        );
 
         this.datacollection = {
           labels: this.temptimes,
@@ -78,6 +78,7 @@ export default {
             }
           ]
         };
+
         document.getElementById("tempLabel").style.display = "block";
         document.getElementById("tempLabel").innerHTML =
           "Current Temperature: " + this.temps[this.temps.length - 1] + "°C";

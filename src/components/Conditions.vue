@@ -7,7 +7,7 @@
     >Sorry, but the following error occurred: {{errorStr}}</b-alert>
     <b-row v-if="location && place">
       <b-col class="text-center">
-        <h5> Your current location is: {{place}}</h5>
+        <h5>Your current location is: {{place}}</h5>
       </b-col>
     </b-row>
     <b-row>
@@ -43,6 +43,10 @@
 <script>
 import axios from "axios";
 
+const AERIS_API_SECRET = "iSgRXRaZBQJGtlveYR1mVuD6pTkePdnqK19VUf25";
+const AERIS_API_KEY = "lb0lr2m16uYd0oENeFeZy";
+const OPENWEATHER_API_KEY = "8f343836a14787d4573a0daabf48adc0";
+
 export default {
   data() {
     return {
@@ -58,7 +62,6 @@ export default {
     this.getLocation();
   },
   methods: {
-
     getLocation() {
       //do we support geolocation
       if (!("geolocation" in navigator)) {
@@ -80,40 +83,33 @@ export default {
         }
       );
     },
-    getAirQuality(location) {
+    async getAirQuality(location) {
       try {
-        axios
-          .get(
-            `http://api.aerisapi.com/airquality/${location.coords.latitude},${location.coords.longitude}?client_id=lb0lr2m16uYd0oENeFeZy&client_secret=iSgRXRaZBQJGtlveYR1mVuD6pTkePdnqK19VUf25`
-          )
-          .then(
-            response =>
-              (this.airQuality = response.data.response[0].periods[0].pollutants
-                .map(item => item)
-                .filter(x => x.type != "pm10" && x.type != "pm2.5" && x.type)
-                .map(y => {
-                  const parameter = {};
-                  parameter["Parameter"] = y.name;
-                  parameter["PPB"] = y.valuePPB;
-                  parameter["UGM3"] = y.valueUGM3;
-                  parameter["AQI"] = y.aqi;
-                  return parameter;
-                }))
-          );
+        let response = await axios.get(
+          `http://api.aerisapi.com/airquality/${location.coords.latitude},${location.coords.longitude}?client_id=${AERIS_API_KEY}&client_secret=${AERIS_API_SECRET}`
+        );
+        this.airQuality = response.data.response[0].periods[0].pollutants
+          .map(item => item)
+          .filter(x => x.type != "pm10" && x.type != "pm2.5" && x.type)
+          .map(y => {
+            const parameter = {};
+            parameter["Parameter"] = y.name;
+            parameter["PPB"] = y.valuePPB;
+            parameter["UGM3"] = y.valueUGM3;
+            parameter["AQI"] = y.aqi;
+            return parameter;
+          });
       } catch (e) {
         console.error(e);
       }
     },
-    getWeather(location) {
+    async getWeather(location) {
       try {
-        axios
-          .get(
-            `http://api.openweathermap.org/data/2.5/weather?lat=${location.coords.latitude}&lon=${location.coords.longitude}&units=metric&APPID=8f343836a14787d4573a0daabf48adc0`
-          )
-          .then(response => {
-            this.weatherParams = response.data.main;
-            this.place = response.data.name;
-          });
+        let response = await axios.get(
+          `http://api.openweathermap.org/data/2.5/weather?lat=${location.coords.latitude}&lon=${location.coords.longitude}&units=metric&APPID=${OPENWEATHER_API_KEY}`
+        );
+        this.weatherParams = response.data.main;
+        this.place = response.data.name;
       } catch (e) {
         console.error(e);
       }
