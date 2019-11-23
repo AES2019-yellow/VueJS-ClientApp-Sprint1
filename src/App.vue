@@ -10,9 +10,8 @@
     </b-row>
     <hr>
     <b-row>
-      <b-col><location/></b-col>
+      <b-col><conditions/></b-col>
     </b-row>
-    <conditions/>
   </b-container>
 </template>
 
@@ -20,7 +19,6 @@
 import Temperature from "./components/Temperature.vue";
 import Co2 from "./components/Co2";
 import Pressure from "./components/Pressure";
-import Location from "./components/Location";
 import Conditions from "./components/Conditions";
 
 export default {
@@ -29,7 +27,6 @@ export default {
     Temperature,
     Co2,
     Pressure,
-    Location, 
     Conditions
   }
 };

@@ -1,5 +1,15 @@
 <template>
   <b-container>
+    <b-alert
+      v-model="error"
+      variant="danger"
+      dismissible
+    >Sorry, but the following error occurred: {{errorStr}}</b-alert>
+    <b-row v-if="location && place">
+      <b-col class="text-center">
+        <h5> Your current location is: {{place}}</h5>
+      </b-col>
+    </b-row>
     <b-row>
       <b-col v-if="airQuality">
         <h5>Air Quality</h5>
@@ -32,28 +42,45 @@
 
 <script>
 import axios from "axios";
-import { mapState } from 'vuex';
-
 
 export default {
-  computed: mapState({
-    location: state => state.location
-
-  }),
   data() {
     return {
-      location: this.state.location,
+      location: null,
+      errorStr: null,
+      error: false,
       airQuality: null,
       weatherParams: null,
       place: null
     };
   },
   mounted() {
-    this.getAirQuality();
-    this.getWeather();
+    this.getLocation();
   },
   methods: {
-    getAirQuality() {
+
+    getLocation() {
+      //do we support geolocation
+      if (!("geolocation" in navigator)) {
+        this.errorStr = "Geolocation is not available.";
+        this.error = "true";
+        return;
+      }
+
+      // get position
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          this.location = pos;
+          this.getAirQuality(pos);
+          this.getWeather(pos);
+        },
+        err => {
+          this.errorStr = err.message;
+          this.error = true;
+        }
+      );
+    },
+    getAirQuality(location) {
       try {
         axios
           .get(
@@ -77,7 +104,7 @@ export default {
         console.error(e);
       }
     },
-    getWeather() {
+    getWeather(location) {
       try {
         axios
           .get(

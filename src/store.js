@@ -6,13 +6,14 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state:{
-        location: null,
         token: null
     },
     mutations: {
-
+        updateToken(state, newtoken){
+            state.token = newtoken
+        }
     },
     actions:{
-
+        
     }
 })
