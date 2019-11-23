@@ -1,17 +1,18 @@
 <template>
-  <b-container id="app" class="bv-example-row">
+  <b-container id="app" class="container">
     <b-row >
       <b-col class="text-center"><h2 >Automatic Suffocation Detection System - Sprint2</h2></b-col>      
     </b-row>
     <b-row class="text-center">
-      <b-col md="4"><temperature /></b-col>
-      <b-col md="4"><co2 /></b-col>
-      <b-col md="4"><pressure /></b-col>
+      <b-col class="mr-auto" md="3"><temperature /></b-col>
+      <b-col class="mx-auto" md="3"><co2 /></b-col>
+      <b-col class="ml-auto" md="3"><pressure /></b-col>
     </b-row>
     <hr>
     <b-row>
-      <b-col><location /></b-col>
+      <b-col><location/></b-col>
     </b-row>
+    <conditions/>
   </b-container>
 </template>
 
@@ -20,6 +21,7 @@ import Temperature from "./components/Temperature.vue";
 import Co2 from "./components/Co2";
 import Pressure from "./components/Pressure";
 import Location from "./components/Location";
+import Conditions from "./components/Conditions";
 
 export default {
   name: "app",
@@ -27,13 +29,8 @@ export default {
     Temperature,
     Co2,
     Pressure,
-    Location
-  },
-  data() {
-    return {
-      temperatures: [],
-      times: []
-    };
+    Location, 
+    Conditions
   }
 };
 </script>

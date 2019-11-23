@@ -18,19 +18,47 @@ export default {
   data() {
     return {
       loaded: false,
-      datacollection: null,
+      datacollection: {
+        datasets: [
+          {
+            label: "Temperature",
+            backgroundColor: "#69caf0"
+          }
+        ]
+      },
+      device: null,
+      token:
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJkb3JhZG8xMTIiLCJlbWFpbCI6ImRvcmFkb0Bjb3JyZW8uY29tIiwiaWF0IjoxNTc0NDUxMTM5LCJleHAiOjE1NzQ0NzI3Mzl9.LFvfxOcEdJAYxpLtUCa6o12YVf7OXKOGeyz058LnUnA"
     };
   },
   mounted() {
     this.fillData();
   },
   methods: {
-    fillData() {
+    async fillData() {
       try {
+        const headers = {
+          Authorization: this.token
+        };
+        let response = await axios.get("http://localhost:3000/Devices?n=10", {
+          headers
+        });
+        this.device = response.data.devices[0];
+        this.plot(this.device);
+      } catch (e) {
+        console.error(e);
+      }
+    },
+
+    plot(device) {
+      try {
+        const headers = {
+          Authorization: this.token
+        };
         axios
-          .get(
-            "http://localhost:3000/fe%3A1f%3Aa1%3A94%3Ac8%3A20/temperature?last=30"
-          )
+          .get(`http://localhost:3000/${device}/temperature?last=30`, {
+            headers
+          })
           .then(response => {
             this.temps = response.data.map(temperature =>
               parseFloat(temperature.temperature)
@@ -38,7 +66,6 @@ export default {
             this.temptimes = response.data.map(timestamp =>
               moment(timestamp.timestamp).format("MMMM Do YYYY, h:mm:ss a")
             );
-            //  console.log(this.temps)
           });
 
         this.datacollection = {
@@ -53,7 +80,7 @@ export default {
         };
         document.getElementById("tempLabel").style.display = "block";
         document.getElementById("tempLabel").innerHTML =
-          "Current Temperature: " + this.temps[this.temps.length - 1];
+          "Current Temperature: " + this.temps[this.temps.length - 1] + "°C";
       } catch (e) {
         console.error(e);
       }
@@ -64,7 +91,7 @@ export default {
 
 <style>
 .small {
-  max-width: 800px auto;
+  max-width: 500px auto;
   margin: 10px auto;
   float: right;
 }
