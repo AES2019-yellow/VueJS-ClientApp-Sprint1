@@ -1,8 +1,8 @@
 <template>
   <div class="small">
-    <label id="tempLabel" style="display: none"></label>
+    <label id="pressLabel" style="display: none"></label>
     <bar-chart :chart-data="datacollection"></bar-chart>
-    <b-button @click="fillData()" variant="primary" size="sm">Get T°</b-button>
+    <b-button @click="fillData()" variant="primary" size="sm">Get Pres</b-button>
   </div>
 </template>
 
@@ -21,12 +21,11 @@ export default {
       datacollection: {
         datasets: [
           {
-            label: "Temperature",
-            backgroundColor: "#69caf0"
+            label: "Pressure",
+            backgroundColor: "#33cc33"
           }
         ]
       },
-      device: null,
       token: this.$store.state.token
     };
   },
@@ -35,10 +34,10 @@ export default {
   },
   methods: {
     async fillData() {
+      const headers = {
+        Authorization: this.token
+      };
       try {
-        const headers = {
-          Authorization: this.token
-        };
         let response = await axios.get("http://localhost:3000/Devices?n=10", {
           headers
         });
@@ -48,40 +47,38 @@ export default {
         console.error(e);
       }
     },
-
     async plot(device) {
       try {
         const headers = {
           Authorization: this.token
         };
         let response = await axios.get(
-          `http://localhost:3000/${device}/temperature?last=30`,
+          `http://localhost:3000/${device}/pressure?last=30`,
           {
             headers
           }
         );
 
-        this.temps = response.data.map(temperature =>
-          parseFloat(temperature.temperature)
+        this.press = response.data.map(pressure =>
+          parseFloat(pressure.pressure)
         );
-        this.temptimes = response.data.map(timestamp =>
+        this.presstimes = response.data.map(timestamp =>
           moment(timestamp.timestamp).format("MMMM Do YYYY, h:mm:ss a")
         );
 
         this.datacollection = {
-          labels: this.temptimes,
+          labels: this.presstimes,
           datasets: [
             {
-              label: "Temperature",
-              backgroundColor: "#69caf0",
-              data: this.temps
+              label: "Pressure",
+              backgroundColor: "#33cc33",
+              data: this.press
             }
           ]
         };
-
-        document.getElementById("tempLabel").style.display = "block";
-        document.getElementById("tempLabel").innerHTML =
-          "Current Temperature: " + this.temps[this.temps.length - 1] + "°C";
+        document.getElementById("pressLabel").style.display = "block";
+        document.getElementById("pressLabel").innerHTML =
+          "Current Pressure: " + this.press[this.press.length - 1];
       } catch (e) {
         console.error(e);
       }
