@@ -41,7 +41,7 @@ export default {
         let response = await axios.get("http://localhost:3000/Devices?n=10", {
           headers
         });
-        this.device = response.data.devices[0];
+        this.device = response.data.devices.find(x => x != "");
         this.plot(this.device);
       } catch (e) {
         console.error(e);
@@ -61,10 +61,10 @@ export default {
 
         this.press = response.data.map(pressure =>
           parseFloat(pressure.pressure)
-        );
+        ).reverse();
         this.presstimes = response.data.map(timestamp =>
           moment(timestamp.timestamp).format("MMMM Do YYYY, h:mm:ss a")
-        );
+        ).reverse();
 
         this.datacollection = {
           labels: this.presstimes,

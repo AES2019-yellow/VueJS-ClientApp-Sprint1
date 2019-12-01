@@ -1,6 +1,6 @@
 <template>
   <b-container id="app" class="container">
-    <b-row>
+    <b-row >
       <b-col class="text-center">
         <h2>Automatic Suffocation Detection System - Sprint2</h2>
       </b-col>

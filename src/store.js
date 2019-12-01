@@ -6,12 +6,12 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state:{
-        token: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjo0LCJ1c2VybmFtZSI6InRlc3QiLCJmaXJzdG5hbWUiOiJ0ZXN0IiwibGFzdG5hbWUiOiJ0ZXN0IiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIn0sImlhdCI6MTU3NDg0ODM3NH0.MlxgFp-EB2TYg7qnPx0LJjIdg9m8nOztMk2yHz_VO28",
+        token: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidXNlcm5hbWUiOiJ0ZXN0IiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNTc1MjE4MTcxLCJleHAiOjE1NzUyMzk3NzF9.ahkp4-meaVY2PmBot_snG9T8y0Col_bDqgkYeTqHI6o"
 
     },
     mutations: {
         updateToken(state, newtoken){
-            state.token = newtoken
+            state.token = `Bearer ${newtoken}`
         }
     },
     actions:{
