@@ -26,7 +26,7 @@ export default {
           }
         ]
       },
-      device: null,
+      device: this.$store.state.device,
       token: this.$store.state.token
     };
   },
@@ -61,12 +61,14 @@ export default {
           }
         );
 
-        this.temps = response.data.map(temperature =>
-          parseFloat(temperature.temperature)
-        ).reverse();
-        this.temptimes = response.data.map(timestamp =>
-          moment(timestamp.timestamp).format("MMMM Do YYYY, h:mm:ss a")
-        ).reverse();
+        this.temps = response.data
+          .map(temperature => parseFloat(temperature.temperature))
+          .reverse();
+        this.temptimes = response.data
+          .map(timestamp =>
+            moment(timestamp.timestamp).format("MMMM Do YYYY, h:mm:ss a")
+          )
+          .reverse();
 
         this.datacollection = {
           labels: this.temptimes,

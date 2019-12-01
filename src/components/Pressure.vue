@@ -12,6 +12,7 @@ import axios from "axios";
 import moment from "moment";
 
 export default {
+  name: "pressure",
   components: {
     BarChart
   },
@@ -26,7 +27,8 @@ export default {
           }
         ]
       },
-      token: this.$store.state.token
+      token: this.$store.state.token,
+      device: this.$store.state.device
     };
   },
   mounted() {
@@ -34,10 +36,13 @@ export default {
   },
   methods: {
     async fillData() {
-      const headers = {
-        Authorization: this.token
-      };
       try {
+        // let response = await this.$store.dispatch("retrieveDevice");
+        // this.device = response.data.devices.find(x => x != "");
+        // this.plot(this.device);
+        const headers = {
+          Authorization: this.token
+        };
         let response = await axios.get("http://localhost:3000/Devices?n=10", {
           headers
         });
@@ -59,12 +64,14 @@ export default {
           }
         );
 
-        this.press = response.data.map(pressure =>
-          parseFloat(pressure.pressure)
-        ).reverse();
-        this.presstimes = response.data.map(timestamp =>
-          moment(timestamp.timestamp).format("MMMM Do YYYY, h:mm:ss a")
-        ).reverse();
+        this.press = response.data
+          .map(pressure => parseFloat(pressure.pressure))
+          .reverse();
+        this.presstimes = response.data
+          .map(timestamp =>
+            moment(timestamp.timestamp).format("MMMM Do YYYY, h:mm:ss a")
+          )
+          .reverse();
 
         this.datacollection = {
           labels: this.presstimes,

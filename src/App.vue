@@ -1,5 +1,6 @@
 <template>
   <b-container id="app" class="container">
+    <login/>
     <b-row >
       <b-col class="text-center">
         <h2>Automatic Suffocation Detection System - Sprint2</h2>
@@ -30,6 +31,7 @@ import Temperature from "./components/Temperature.vue";
 import Co2 from "./components/Co2";
 import Pressure from "./components/Pressure";
 import Conditions from "./components/Conditions";
+import Login from "./components/Login";
 
 export default {
   name: "app",
@@ -37,7 +39,8 @@ export default {
     Temperature,
     Co2,
     Pressure,
-    Conditions
+    Conditions,
+    Login
   }
 };
 </script>

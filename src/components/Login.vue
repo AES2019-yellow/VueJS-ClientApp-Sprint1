@@ -1,38 +1,55 @@
 <template>
-  <b-form inline @submit.prevent="login">
-    <label class="mr-sm-2" for="inline-form-custom-select-pref">Email</label>
-    <b-form-input required v-model="email" id="email" type="email" placeholder="Enter email"></b-form-input>
-    <label class="mr-sm-2" for="inline-form-custom-select-pref">Password</label>
-    <b-form-input required v-model="password" id="password" type="password" placeholder="Password"></b-form-input>
-    <hr />
-    <b-button type="submit" variant="primary">Login</b-button>
-  </b-form>
+  <div>
+    <h2 class="login-heading">Login</h2>
+    <b-form action="#" @submit.prevent="login">
+      <b-form-group id="email-label" label="Email address:" label-for="email">
+        <b-form-input
+          id="email"
+          v-model="user.email"
+          type="email"
+          required
+          placeholder="Enter email"
+        ></b-form-input>
+      </b-form-group>
+
+      <b-form-group id="password-label" label="Password:" label-for="password">
+        <b-form-input
+          id="password"
+          v-model="user.password"
+          type="password"
+          required
+          placeholder="Password"
+        ></b-form-input>
+      </b-form-group>
+
+      <b-button type="submit" variant="primary">Login</b-button>
+    </b-form>
+  </div>
 </template>
 
 <script>
-import axios from "axios";
 
 export default {
+  name: "login",
   data() {
     return {
-      email: "",
-      password: ""
+      user: {
+        email: "",
+        password: ""
+      }
     };
   },
   methods: {
-    async login() {
-      try {
-        let user = {
-          user: {
-            email: this.email,
-            password: this.password
-          }
-        };
-        let response = await axios.post("http://localhost:3000/login", user);
-        this.$store.state.token = `Bearer ${response.data.token}`;
-      } catch (e) {
-        console.error(e);
-      }
+    login() {
+      this.$store
+        .dispatch("retrieveToken", {
+          email: this.user.email,
+          password: this.user.password
+        })
+        .then(response => {
+          console.log(response)
+          this.$router.push({ name: "conditions" });
+        });
     }
   }
 };
