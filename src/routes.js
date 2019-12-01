@@ -1,11 +1,11 @@
-import App from './App'
+import Plots from './components/Plots'
 import Login from './components/Login'
 // import Logout from './components/auth/Logout'
 // import Register from './components/auth/Register'
 
 const routes = [
   {
-    path: '/',
+    path: '/login',
     name: 'login',
     component: Login,
     meta: {
@@ -15,7 +15,7 @@ const routes = [
   {
     path: '/conditions',
     name: 'conditions',
-    component: App,
+    component: Plots,
     meta: {
       requiresAuth: true,
     }

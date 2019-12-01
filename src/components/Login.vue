@@ -24,6 +24,7 @@
 
       <b-button type="submit" variant="primary">Login</b-button>
     </b-form>
+    <router-view></router-view>
   </div>
 </template>
 
