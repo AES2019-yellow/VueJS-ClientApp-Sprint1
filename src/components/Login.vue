@@ -1,6 +1,11 @@
 <template>
   <div>
     <h2 class="login-heading">Login</h2>
+    <b-alert
+      v-model="error"
+      variant="danger"
+      dismissible
+    >The email or password is wrong</b-alert>
     <b-form action="#" @submit.prevent="login">
       <b-form-group id="email-label" label="Email address:" label-for="email">
         <b-form-input
@@ -29,11 +34,11 @@
 </template>
 
 <script>
-
 export default {
   name: "login",
   data() {
     return {
+      error:false,
       user: {
         email: "",
         password: ""
@@ -41,16 +46,17 @@ export default {
     };
   },
   methods: {
-    login() {
-      this.$store
-        .dispatch("retrieveToken", {
-          email: this.user.email,
-          password: this.user.password
-        })
-        .then(response => {
-          console.log(response)
-          this.$router.push({ name: "conditions" });
-        });
+    async login() {
+      let res = await this.$store.dispatch("retrieveToken", {
+        email: this.user.email,
+        password: this.user.password
+      });
+      if (res.status == "200") {
+        this.$router.push({ name: "conditions" });
+      }
+      else if(res.status == "404"){
+        this.error = true;
+      }
     }
   }
 };

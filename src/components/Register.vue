@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h2 class="login-heading">Login</h2>
-    <b-form action="#" @submit.prevent="register">
+    <h2 class="login-heading">Register</h2>
+    <b-form action="#" @submit.prevent="register" @reset="reset">
       <b-form-group id="username-label" label="Username:" label-for="username">
         <b-form-input
           id="username"
@@ -48,18 +48,8 @@
           placeholder="Password"
         ></b-form-input>
       </b-form-group>
-
-      <b-form-group id="repassword-label" label="Password:" label-for="repassword">
-        <b-form-input
-          id="repassword"
-          v-model="repassword"
-          type="password"
-          required
-          placeholder="Repeat Password"
-        ></b-form-input>
-      </b-form-group>
       <b-button type="submit" variant="primary">Register</b-button>
-      <b-button type="cancel" variant="danger" @click="cancel()">Cancel</b-button>
+      <b-button type="reset" variant="danger" class="mx-1">Reset</b-button>
     </b-form>
     <router-view></router-view>
   </div>
@@ -76,25 +66,28 @@ export default {
         lastname: "",
         email: "",
         password: ""
-      },
-      repassword: ""
+      }
     };
   },
   methods: {
-    register() {
-      this.$router.push({ name: "conditions" });
-      // this.$store
-      //   .dispatch("retrieveToken", {
-      //     email: this.user.email,
-      //     password: this.user.password
-      //   })
-      //   .then(response => {
-      //     console.log(response);
-      //     this.$router.push({ name: "conditions" });
-      //   });
+    async register() {
+      let res = await this.$store.dispatch("register", {
+        username: this.user.username,
+        firstname: this.user.firstname,
+        lastname: this.user.lastname,
+        email: this.user.email,
+        password: this.user.password
+      });
+      if (res.status == "200") {
+        this.$router.push({ name: "login" });
+      }
     },
-    cancel() {
-      this.$router.push({ name: "home" });
+    reset() {
+      (this.user.username = ""),
+        (this.user.firstname = ""),
+        (this.user.lastname = ""),
+        (this.user.email = ""),
+        (this.user.password = "")
     }
   }
 };

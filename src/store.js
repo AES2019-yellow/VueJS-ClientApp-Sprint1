@@ -4,16 +4,17 @@ import axios from "axios";
 import "es6-promise/auto";
 
 Vue.use(Vuex);
-axios.defaults.baseURL = "http://localhost:3000";
+let BASE_URL = "http://localhost:3000"
+axios.defaults.baseURL = BASE_URL;
 
 export default new Vuex.Store({
   state: {
-    token: 'Bearer '+localStorage.getItem("access_token") || null,
+    token: "Bearer " + localStorage.getItem("access_token") || null,
     device: null
   },
   getters: {
     loggedIn(state) {
-      return state.token !== null;
+      return state.token !== null && state.token != "Bearer null";
     }
   },
   mutations: {
@@ -36,6 +37,7 @@ export default new Vuex.Store({
             password: credentials.password
           }
         });
+
         const token = response.data.token;
 
         localStorage.setItem("access_token", token);
@@ -47,52 +49,39 @@ export default new Vuex.Store({
       }
     },
     destroyToken(context) {
-      axios.defaults.headers.common["Authorization"] =
-        "Bearer " + context.state.token;
-  
-      if (context.getters.loggedIn) {
-        return new Promise((resolve, reject) => {
-          axios
-            .post("/logout")
-            .then(response => {
-              localStorage.removeItem("access_token");
-              context.commit("destroyToken");
-              resolve(response);
-              // console.log(response);
-              // context.commit('addTodo', response.data)
-            })
-            .catch(error => {
-              localStorage.removeItem("access_token");
-              context.commit("destroyToken");
-              reject(error);
-            });
+      localStorage.removeItem("access_token");
+      context.commit("destroyToken");
+    },
+    async register(context, data) {
+      try {
+        let register = await axios.post("/register", {
+          user: {
+            username: data.username,
+            firstname: data.firstname,
+            lastname: data.lastname,
+            email: data.email,
+            password: data.password
+          }
         });
+        let response = await axios.get(register.data.activation.split(BASE_URL)[1])
+        return response;
+      } catch (error) {
+        console.log(error);
+        return error;
       }
     },
-    async retrieveDevice(context){
-      axios.defaults.headers.common['Authorization'] = context.state.token
-        try {
-          let response = await axios.get("/Devices");
-          const device = response.data.devices.find(x => x != "");
-  
-          context.commit("retrieveDevice", device);
-          return response;
-        } catch (e) {
-          console.error(e);
-          return e;
-        }
-    },
-    retrieveData(context) {
-      axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.token
-  
-      axios.get('/todos')
-        .then(response => {
-          context.commit('retrieveTodos', response.data)
-        })
-        .catch(error => {
-          console.log(error)
-        })
+    async retrieveDevice(context) {
+      axios.defaults.headers.common["Authorization"] = context.state.token;
+      try {
+        let response = await axios.get("/Devices");
+        const device = response.data.devices.find(x => x != "");
+
+        context.commit("retrieveDevice", device);
+        return response;
+      } catch (e) {
+        console.error(e);
+        return e;
+      }
     }
-  
   }
 });

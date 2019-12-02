@@ -1,6 +1,6 @@
 import Plots from './components/Plots'
 import Login from './components/Login'
-// import Logout from './components/auth/Logout'
+import Logout from './components/Logout'
 import Register from './components/Register'
 import Home from './components/Menu'
 
@@ -25,6 +25,11 @@ const routes = [
     meta: {
       requiresVisitor: true,
     }
+  },
+  {
+    path: '/logout',
+    name: 'logout',
+    component: Logout
   },
   {
     path: '/conditions',
