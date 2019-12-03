@@ -25,7 +25,7 @@ export default {
           }
         ]
       },
-      token: this.$store.state.token
+      token : "Bearer " + localStorage.token
     };
   },
   mounted() {
@@ -40,7 +40,7 @@ export default {
         let response = await axios.get("http://localhost:3000/Devices?n=10", {
           headers
         });
-        this.device = response.data.devices[0];
+        this.device = response.data.devices.find(x => x != "");
         this.plot(this.device);
       } catch (e) {
         console.error(e);
@@ -58,10 +58,10 @@ export default {
           }
         );
 
-        this.co2s = response.data.map(CO2 => CO2.CO2);
+        this.co2s = response.data.map(CO2 => CO2.CO2).reverse();
         this.co2times = response.data.map(timestamp =>
-          moment(timestamp.timestamp).format("MMMM dd YY, h:mm:ss a")
-        );
+          moment(timestamp.timestamp).format("MMMM Do YYYY, h:mm:ss a")
+        ).reverse();
         this.datacollection = {
           labels: this.co2times,
           datasets: [

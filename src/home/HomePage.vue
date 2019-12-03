@@ -1,8 +1,8 @@
 <template>
-<b-container id="app" class="container">
-    <b-row>
+    <b-container id="app" class="container">
+          <b-row>
       <b-col class="text-center">
-        <h2>Automatic Suffocation Detection System</h2>
+        <h5>Automatic Suffocation Detection System</h5>
       </b-col>
     </b-row>
     <b-row class="text-center">
@@ -22,7 +22,8 @@
         <conditions />
       </b-col>
     </b-row>
-        <div>
+    <router-view></router-view>
+     <div>
         <p>
             <router-link to="/login">Logout</router-link>
         </p>
@@ -68,7 +69,6 @@ export default {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  margin-top: 30px;
   max-width: auto;
 }
 </style>

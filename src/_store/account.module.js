@@ -12,7 +12,7 @@ const actions = {
         commit('loginRequest', { email });
          
         userService.login({ dispatch, commit }, { "user": { email, password } })
-       // userService.login(username, password)
+        // userService.login(username, password)
             .then(
                 user => {
                     commit('loginSuccess', user);
@@ -38,7 +38,7 @@ const actions = {
                     router.push('/login');
                     setTimeout(() => {
                         // display success message after route change completes
-                        dispatch('alert/success', 'Registration successful', { root: true });
+                        dispatch('alert/success', 'Registration successful. Please activate your account.', { root: true });
                     })
                 },
                 error => {
