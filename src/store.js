@@ -19,7 +19,7 @@ export default new Vuex.Store({
   },
   mutations: {
     retrieveToken(state, token) {
-      state.token = token;
+      state.token = "Bearer " + token;
     },
     destroyToken(state) {
       state.token = null;
