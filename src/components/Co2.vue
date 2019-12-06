@@ -1,8 +1,10 @@
 <template>
   <div class="small">
+    <div>External CO2: {{air_quality.filter(x => x.Parameter == "carbon monoxide")[0].UGM3}}</div>
     <label id="CO2Label" style="display: none"></label>
     <bar-chart onload="fillData()" :chart-data="datacollection"></bar-chart>
     <b-button @click="fillData()" variant="primary" size="sm">Get CO2</b-button>
+    
   </div>
 </template>
 
@@ -25,7 +27,9 @@ export default {
           }
         ]
       },
-      token: this.$store.state.token
+      device: this.$store.state.device,
+      token: this.$store.state.token,
+      air_quality: this.$store.state.air_quality
     };
   },
   mounted() {
@@ -41,24 +45,26 @@ export default {
           headers
         });
         this.device = response.data.devices.find(x => x != "");
-        this.plot(this.device);
+        this.plot();
       } catch (e) {
         console.error(e);
       }
     },
-    async plot(device) {
+    async plot() {
       try {
         const headers = {
           Authorization: this.token
         };
         let response = await axios.get(
-          `http://localhost:3000/${device}/airquality?last=30`,
+          `http://localhost:3000/${this.device}/airquality?last=50`,
           {
             headers
           }
         );
 
-        this.co2s = response.data.map(CO2 => CO2.CO2).reverse();
+        console.log(this.$store.state.air_quality);
+
+        this.co2s = response.data.map(CO2 => parseFloat(CO2.CO2)).reverse();
         this.co2times = response.data.map(timestamp =>
           moment(timestamp.timestamp).format("MMMM Do YYYY, h:mm:ss a")
         ).reverse();
@@ -72,9 +78,11 @@ export default {
             }
           ]
         };
+
+        const average = this.co2s.reduce((x,y) => x+y, 0)/this.co2s.length;
         document.getElementById("CO2Label").style.display = "block";
         document.getElementById("CO2Label").innerHTML =
-          "Current CO2: " + this.co2s[this.co2s.length - 1];
+          "Current CO2: " + average.toFixed(2);
       } catch (e) {
         console.error(e);
       }

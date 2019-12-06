@@ -1,5 +1,6 @@
 <template>
   <div class="small">
+    <div>External Pressure: {{weather.pressure}} hPa</div>
     <label id="pressLabel" style="display: none"></label>
     <bar-chart :chart-data="datacollection"></bar-chart>
     <b-button @click="fillData()" variant="primary" size="sm">Get Pres</b-button>
@@ -28,7 +29,8 @@ export default {
         ]
       },
       token: this.$store.state.token,
-      device: this.$store.state.device
+      device: this.$store.state.device,
+      weather: this.$store.state.weather_conditions
     };
   },
   mounted() {
@@ -37,28 +39,25 @@ export default {
   methods: {
     async fillData() {
       try {
-        // let response = await this.$store.dispatch("retrieveDevice");
-        // this.device = response.data.devices.find(x => x != "");
-        // this.plot(this.device);
         const headers = {
           Authorization: this.token
         };
-        let response = await axios.get("http://localhost:3000/Devices?n=10", {
+        let response = await axios.get("http://localhost:3000/Devices?n=50", {
           headers
         });
         this.device = response.data.devices.find(x => x != "");
-        this.plot(this.device);
+        this.plot();
       } catch (e) {
         console.error(e);
       }
     },
-    async plot(device) {
+    async plot() {
       try {
         const headers = {
           Authorization: this.token
         };
         let response = await axios.get(
-          `http://localhost:3000/${device}/pressure?last=30`,
+          `http://localhost:3000/${this.device}/pressure?last=50`,
           {
             headers
           }
@@ -83,9 +82,11 @@ export default {
             }
           ]
         };
+
+        const average = this.press.reduce((x,y) => x+y, 0)/this.press.length
         document.getElementById("pressLabel").style.display = "block";
         document.getElementById("pressLabel").innerHTML =
-          "Current Pressure: " + this.press[this.press.length - 1];
+          "Current Pressure: " + average.toFixed(2) +" hPa";
       } catch (e) {
         console.error(e);
       }

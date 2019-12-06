@@ -1,14 +1,17 @@
 <template>
     <b-container id="app" class="container">
     <b-row class="text-center">
-      <b-col class="mr-auto" md="3">
+      <b-col class="mr-auto" md="5">
         <temperature />
       </b-col>
-      <b-col class="mx-auto" md="3">
+      <b-col class="mx-auto" md="5">
         <co2 />
       </b-col>
-      <b-col class="ml-auto" md="3">
+      <b-col class="mr-auto" md="5">
         <pressure />
+      </b-col>
+      <b-col class="mx-auto" md="5">
+        <humidity />
       </b-col>
     </b-row>
     <hr />
@@ -26,6 +29,7 @@
 import Temperature from "./Temperature.vue";
 import Co2 from "./Co2";
 import Pressure from "./Pressure";
+import Humidity from "./Humidity";
 import Conditions from "./Conditions";
 
 export default {
@@ -34,6 +38,7 @@ export default {
     Temperature,
     Co2,
     Pressure,
+    Humidity,
     Conditions
   }
 };
