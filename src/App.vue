@@ -1,46 +1,21 @@
 <template>
-  <b-container id="app" class="bv-example-row">
+    <b-container id="app" class="container">
     <b-row >
-      <b-col class="text-center"><h2 >Automatic Suffocation Detection System - Sprint2</h2></b-col>      
+      <b-col class="text-center">
+        <h2>Automatic Suffocation Detection System</h2>
+        <router-link :to="{ name: 'logout' }" v-if="loggedIn" @click="logout()">Logout</router-link>
+      </b-col>
     </b-row>
-    <b-row class="text-center">
-      <b-col><temperature /></b-col>
-      <b-col><co2 /></b-col>
-    </b-row>
-    <hr>
-    <b-row>
-      <b-col><location /></b-col>
-    </b-row>
+    <router-view></router-view>
   </b-container>
 </template>
 
 <script>
-import Temperature from "./components/Temperature.vue";
-import Co2 from "./components/Co2";
-import Location from "./components/Location";
-
 export default {
-  name: "app",
-  components: {
-    Temperature,
-    Co2,
-    Location
-  },
-  data() {
-    return {
-      temperatures: [],
-      times: []
-    };
+  computed: {
+    loggedIn() {
+      return this.$store.getters.loggedIn
+    }
   }
-};
-</script>
-
-<style>
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  margin-top: 30px;
-  max-width: auto;
 }
-</style>
+</script>

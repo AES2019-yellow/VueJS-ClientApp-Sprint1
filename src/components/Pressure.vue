@@ -1,9 +1,9 @@
 <template>
   <div class="small">
-    <div>External Temperature: {{weather.temp}} °C</div>
-    <label id="tempLabel" style="display: none"></label>
+    <div>External Pressure: {{weather.pressure}} hPa</div>
+    <label id="pressLabel" style="display: none"></label>
     <bar-chart :chart-data="datacollection"></bar-chart>
-    <b-button @click="fillData()" variant="primary" size="sm">Get T°</b-button>
+    <b-button @click="fillData()" variant="primary" size="sm">Get Pres</b-button>
   </div>
 </template>
 
@@ -13,6 +13,7 @@ import axios from "axios";
 import moment from "moment";
 
 export default {
+  name: "pressure",
   components: {
     BarChart
   },
@@ -22,13 +23,13 @@ export default {
       datacollection: {
         datasets: [
           {
-            label: "Temperature",
-            backgroundColor: "#69caf0"
+            label: "Pressure",
+            backgroundColor: "#33cc33"
           }
         ]
       },
-      device: this.$store.state.device,
       token: this.$store.state.token,
+      device: this.$store.state.device,
       weather: this.$store.state.weather_conditions
     };
   },
@@ -41,7 +42,7 @@ export default {
         const headers = {
           Authorization: this.token
         };
-        let response = await axios.get("http://localhost:3000/Devices?n=10", {
+        let response = await axios.get("http://localhost:3000/Devices?n=50", {
           headers
         });
         this.device = response.data.devices.find(x => x != "");
@@ -50,44 +51,42 @@ export default {
         console.error(e);
       }
     },
-
     async plot() {
       try {
         const headers = {
           Authorization: this.token
         };
         let response = await axios.get(
-          `http://localhost:3000/${this.device}/temperature?last=50`,
+          `http://localhost:3000/${this.device}/pressure?last=50`,
           {
             headers
           }
         );
 
-        this.temps = response.data
-          .map(temperature => parseFloat(temperature.temperature))
+        this.press = response.data
+          .map(pressure => parseFloat(pressure.pressure))
           .reverse();
-        this.temptimes = response.data
+        this.presstimes = response.data
           .map(timestamp =>
             moment(timestamp.timestamp).format("MMMM Do YYYY, h:mm:ss a")
           )
           .reverse();
 
         this.datacollection = {
-          labels: this.temptimes,
+          labels: this.presstimes,
           datasets: [
             {
-              label: "Temperature",
-              backgroundColor: "#69caf0",
-              data: this.temps
+              label: "Pressure",
+              backgroundColor: "#33cc33",
+              data: this.press
             }
           ]
         };
 
-        const average = this.temps.reduce((x,y) => x+y, 0)/this.temps.length
-
-        document.getElementById("tempLabel").style.display = "block";
-        document.getElementById("tempLabel").innerHTML =
-          "Current Temperature: " + average.toFixed(2) + " °C";
+        const average = this.press.reduce((x,y) => x+y, 0)/this.press.length
+        document.getElementById("pressLabel").style.display = "block";
+        document.getElementById("pressLabel").innerHTML =
+          "Current Pressure: " + average.toFixed(2) +" hPa";
       } catch (e) {
         console.error(e);
       }

@@ -1,9 +1,9 @@
 <template>
   <div class="small">
-    <div>External Temperature: {{weather.temp}} °C</div>
-    <label id="tempLabel" style="display: none"></label>
+    <div>External Humidity: {{weather.humidity}} %</div>
+    <label id="humLabel" style="display: none"></label>
     <bar-chart :chart-data="datacollection"></bar-chart>
-    <b-button @click="fillData()" variant="primary" size="sm">Get T°</b-button>
+    <b-button @click="fillData()" variant="primary" size="sm">Get Hum</b-button>
   </div>
 </template>
 
@@ -13,6 +13,7 @@ import axios from "axios";
 import moment from "moment";
 
 export default {
+  name: "humidity",
   components: {
     BarChart
   },
@@ -22,13 +23,13 @@ export default {
       datacollection: {
         datasets: [
           {
-            label: "Temperature",
-            backgroundColor: "#69caf0"
+            label: "Humidity",
+            backgroundColor: "#fcbe03"
           }
         ]
       },
-      device: this.$store.state.device,
       token: this.$store.state.token,
+      device: this.$store.state.device,
       weather: this.$store.state.weather_conditions
     };
   },
@@ -41,7 +42,7 @@ export default {
         const headers = {
           Authorization: this.token
         };
-        let response = await axios.get("http://localhost:3000/Devices?n=10", {
+        let response = await axios.get("http://localhost:3000/Devices?n=50", {
           headers
         });
         this.device = response.data.devices.find(x => x != "");
@@ -50,44 +51,42 @@ export default {
         console.error(e);
       }
     },
-
     async plot() {
       try {
         const headers = {
           Authorization: this.token
         };
         let response = await axios.get(
-          `http://localhost:3000/${this.device}/temperature?last=50`,
+          `http://localhost:3000/${this.device}/humidity?last=50`,
           {
             headers
           }
         );
 
-        this.temps = response.data
-          .map(temperature => parseFloat(temperature.temperature))
+        this.hum = response.data
+          .map(humidity => parseFloat(humidity.humidity))
           .reverse();
-        this.temptimes = response.data
+        this.humtimes = response.data
           .map(timestamp =>
             moment(timestamp.timestamp).format("MMMM Do YYYY, h:mm:ss a")
           )
           .reverse();
 
         this.datacollection = {
-          labels: this.temptimes,
+          labels: this.humtimes,
           datasets: [
             {
-              label: "Temperature",
-              backgroundColor: "#69caf0",
-              data: this.temps
+              label: "Humidity",
+              backgroundColor: "#fcbe03",
+              data: this.hum
             }
           ]
         };
 
-        const average = this.temps.reduce((x,y) => x+y, 0)/this.temps.length
-
-        document.getElementById("tempLabel").style.display = "block";
-        document.getElementById("tempLabel").innerHTML =
-          "Current Temperature: " + average.toFixed(2) + " °C";
+        const average = this.hum.reduce((x,y) => x+y, 0)/this.hum.length
+        document.getElementById("humLabel").style.display = "block";
+        document.getElementById("humLabel").innerHTML =
+          "Current Humidity: " + average.toFixed(2) +"%";
       } catch (e) {
         console.error(e);
       }
