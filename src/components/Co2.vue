@@ -45,18 +45,18 @@ export default {
           headers
         });
         this.device = response.data.devices.find(x => x != "");
-        this.plot();
+        this.plot(this.device);
       } catch (e) {
         console.error(e);
       }
     },
-    async plot() {
+    async plot(device) {
       try {
         const headers = {
           Authorization: this.token
         };
         let response = await axios.get(
-          `http://localhost:3000/${this.device}/airquality?last=50`,
+          `http://localhost:3000/${device}/airquality?last=50`,
           {
             headers
           }
