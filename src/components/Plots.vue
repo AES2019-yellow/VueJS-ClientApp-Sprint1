@@ -1,5 +1,5 @@
 <template>
-    <b-container id="app" class="container">
+  <b-container id="app" class="container">
     <b-row class="text-center">
       <b-col class="mr-auto" md="5">
         <temperature />
@@ -12,6 +12,11 @@
       </b-col>
       <b-col class="mx-auto" md="5">
         <humidity />
+      </b-col>
+    </b-row>
+    <b-row class="text-center">
+      <b-col class="mx-auto" md="5">
+        <b-button @click="emitGlobalClickEvent()" variant="primary" size="md">Get data</b-button>
       </b-col>
     </b-row>
     <hr />
@@ -32,6 +37,8 @@ import Pressure from "./Pressure";
 import Humidity from "./Humidity";
 import Conditions from "./Conditions";
 
+import { EventBus } from "../event-bus.js";
+
 export default {
   name: "app",
   components: {
@@ -40,6 +47,12 @@ export default {
     Pressure,
     Humidity,
     Conditions
+  },
+  methods: {
+    emitGlobalClickEvent() {
+      // Send the event on a channel (i-got-clicked) with a payload (the click count.)
+      EventBus.$emit("getData");
+    }
   }
 };
 </script>

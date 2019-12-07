@@ -1,9 +1,22 @@
 <template>
   <div class="small">
-    <div>External Pressure: {{weather.pressure}} hPa</div>
-    <label id="pressLabel" style="display: none"></label>
-    <bar-chart :chart-data="datacollection"></bar-chart>
-    <b-button @click="fillData()" variant="primary" size="sm">Get Pres</b-button>
+    <b-container id="app" class="container">
+      <b-row class="ml-3">
+        <b-col class="ml-auto" md="5">
+          <p id="pressLabel" style="font-weight: bold"></p>
+        </b-col>
+        <b-col class="mx-auto" md="6">
+          <div style="font-weight: bold">Environment: {{weather.pressure}} hPa</div>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <bar-chart :chart-data="datacollection"></bar-chart>
+          <div id="setPressure" @click="fillData()"></div>
+          <!-- <b-button id="getData" @click="fillData()" variant="primary" size="sm">Get Pres</b-button> -->
+        </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
@@ -11,6 +24,13 @@
 import BarChart from "./BarChart.js";
 import axios from "axios";
 import moment from "moment";
+
+import { EventBus } from '../event-bus.js';
+
+// Listen for the clicked event and its payload.
+EventBus.$on('getData', function () {
+  document.getElementById("setPressure").click(); 
+});
 
 export default {
   name: "pressure",
@@ -83,10 +103,11 @@ export default {
           ]
         };
 
-        const average = this.press.reduce((x,y) => x+y, 0)/this.press.length
+        const average =
+          this.press.reduce((x, y) => x + y, 0) / this.press.length;
         document.getElementById("pressLabel").style.display = "block";
         document.getElementById("pressLabel").innerHTML =
-          "Current Pressure: " + average.toFixed(2) +" hPa";
+          "Current: " + average.toFixed(2) + " hPa";
       } catch (e) {
         console.error(e);
       }

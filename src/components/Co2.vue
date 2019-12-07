@@ -1,10 +1,24 @@
 <template>
   <div class="small">
-    <div>External CO2: {{air_quality.filter(x => x.Parameter == "carbon monoxide")[0].UGM3}}</div>
-    <label id="CO2Label" style="display: none"></label>
-    <bar-chart onload="fillData()" :chart-data="datacollection"></bar-chart>
-    <b-button @click="fillData()" variant="primary" size="sm">Get CO2</b-button>
-    
+    <b-container id="app" class="container">
+      <b-row class="ml-4">
+        <b-col class="ml-auto" md="5">
+          <p id="CO2Label" style="font-weight: bold"></p>
+        </b-col>
+        <b-col class="mx-auto" md="6">
+          <div
+            style="font-weight: bold"
+          >Environment: {{air_quality.filter(x => x.Parameter == "carbon monoxide")[0].UGM3}}</div>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <bar-chart onload="fillData()" :chart-data="datacollection"></bar-chart>
+          <div id="setAir" @click="fillData()"></div>
+          <!-- <b-button @click="fillData()" variant="primary" size="sm">Get CO2</b-button> -->
+        </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
@@ -12,6 +26,13 @@
 import BarChart from "./BarChart.js";
 import axios from "axios";
 import moment from "moment";
+
+import { EventBus } from '../event-bus.js';
+
+// Listen for the clicked event and its payload.
+EventBus.$on('getData', function () {
+  document.getElementById("setAir").click(); 
+});
 
 export default {
   components: {
@@ -62,16 +83,17 @@ export default {
           }
         );
 
-        console.log(this.$store.state.air_quality);
-
         this.co2s = response.data.map(CO2 => parseFloat(CO2.CO2)).reverse();
-        this.co2times = response.data.map(timestamp =>
-          moment(timestamp.timestamp).format("MMMM Do YYYY, h:mm:ss a")
-        ).reverse();
+        this.co2times = response.data
+          .map(timestamp =>
+            moment(timestamp.timestamp).format("MMMM Do YYYY, h:mm:ss a")
+          )
+          .reverse();
         this.datacollection = {
           labels: this.co2times,
           datasets: [
             {
+              type: 'bar',
               label: "CO2",
               backgroundColor: "#f87979",
               data: this.co2s
@@ -79,10 +101,10 @@ export default {
           ]
         };
 
-        const average = this.co2s.reduce((x,y) => x+y, 0)/this.co2s.length;
+        const average = this.co2s.reduce((x, y) => x + y, 0) / this.co2s.length;
         document.getElementById("CO2Label").style.display = "block";
         document.getElementById("CO2Label").innerHTML =
-          "Current CO2: " + average.toFixed(2);
+          "Current: " + average.toFixed(2);
       } catch (e) {
         console.error(e);
       }

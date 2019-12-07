@@ -1,9 +1,22 @@
 <template>
   <div class="small">
-    <div>External Temperature: {{weather.temp}} °C</div>
-    <label id="tempLabel" style="display: none"></label>
-    <bar-chart :chart-data="datacollection"></bar-chart>
-    <b-button @click="fillData()" variant="primary" size="sm">Get T°</b-button>
+    <b-container id="app" class="container">
+      <b-row class="ml-4">
+        <b-col class="ml-auto" md="5">
+          <p id="tempLabel" style="font-weight: bold"></p>
+        </b-col>
+        <b-col class="mx-auto" md="6">
+          <p style="font-weight: bold">Environment: {{weather.temp}} °C</p>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <bar-chart :chart-data="datacollection"></bar-chart>
+          <div id="setTemperature" @click="fillData()"></div>
+          <!-- <b-button @click="fillData()" variant="primary" size="sm">Get T°</b-button> -->
+        </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
@@ -11,6 +24,13 @@
 import BarChart from "./BarChart.js";
 import axios from "axios";
 import moment from "moment";
+
+import { EventBus } from '../event-bus.js';
+
+// Listen for the clicked event and its payload.
+EventBus.$on('getData', function () {
+  document.getElementById("setTemperature").click(); 
+});
 
 export default {
   components: {
@@ -83,11 +103,12 @@ export default {
           ]
         };
 
-        const average = this.temps.reduce((x,y) => x+y, 0)/this.temps.length
+        const average =
+          this.temps.reduce((x, y) => x + y, 0) / this.temps.length;
 
         document.getElementById("tempLabel").style.display = "block";
         document.getElementById("tempLabel").innerHTML =
-          "Current Temperature: " + average.toFixed(2) + " °C";
+          "Current: " + average.toFixed(2) + " °C";
       } catch (e) {
         console.error(e);
       }

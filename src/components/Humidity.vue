@@ -1,9 +1,22 @@
 <template>
   <div class="small">
-    <div>External Humidity: {{weather.humidity}} %</div>
-    <label id="humLabel" style="display: none"></label>
-    <bar-chart :chart-data="datacollection"></bar-chart>
-    <b-button @click="fillData()" variant="primary" size="sm">Get Hum</b-button>
+    <b-container id="app" class="container">
+      <b-row class="ml-4">
+        <b-col class="ml-auto" md="5">
+          <p id="humLabel" style="font-weight: bold"></p>
+        </b-col>
+        <b-col class="mx-auto" md="6">
+          <p style="font-weight: bold">Environment: {{weather.humidity}}%</p>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <bar-chart :chart-data="datacollection"></bar-chart>
+          <div id="setHumidity" @click="fillData()"></div>
+          <!-- <b-button @click="fillData()" variant="primary" size="sm">Get Hum</b-button> -->
+        </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
@@ -11,6 +24,13 @@
 import BarChart from "./BarChart.js";
 import axios from "axios";
 import moment from "moment";
+
+import { EventBus } from '../event-bus.js';
+
+// Listen for the clicked event and its payload.
+EventBus.$on('getData', function () {
+  document.getElementById("setHumidity").click(); 
+});
 
 export default {
   name: "humidity",
@@ -83,10 +103,10 @@ export default {
           ]
         };
 
-        const average = this.hum.reduce((x,y) => x+y, 0)/this.hum.length
+        const average = this.hum.reduce((x, y) => x + y, 0) / this.hum.length;
         document.getElementById("humLabel").style.display = "block";
         document.getElementById("humLabel").innerHTML =
-          "Current Humidity: " + average.toFixed(2) +"%";
+          "Current: " + average.toFixed(2) + "%";
       } catch (e) {
         console.error(e);
       }
