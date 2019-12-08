@@ -3,17 +3,17 @@
     <b-container id="app" class="container">
       <b-row class="ml-4">
         <b-col class="ml-auto" md="5">
-          <p id="tempLabel" style="font-weight: bold"></p>
+          <p id="humLabel" style="font-weight: bold"></p>
         </b-col>
-        <b-col class="mx-auto" md="6">
-          <p style="font-weight: bold">Environment: {{weather.temp}} °C</p>
+        <b-col class="mx-auto" md="6" v-show="weather">
+          <p style="font-weight: bold">Environment: {{weather ? weather.humidity: null}}%</p>
         </b-col>
       </b-row>
       <b-row>
         <b-col>
           <bar-chart :chart-data="datacollection"></bar-chart>
-          <div id="setTemperature" @click="fillData()"></div>
-          <!-- <b-button @click="fillData()" variant="primary" size="sm">Get T°</b-button> -->
+          <div id="setHumidity" @click="fillData()"></div>
+          <!-- <b-button @click="fillData()" variant="primary" size="sm">Get Hum</b-button> -->
         </b-col>
       </b-row>
     </b-container>
@@ -25,14 +25,15 @@ import BarChart from "./BarChart.js";
 import axios from "axios";
 import moment from "moment";
 
-import { EventBus } from '../event-bus.js';
+import { EventBus } from '../../event-bus.js';
 
 // Listen for the clicked event and its payload.
 EventBus.$on('getData', function () {
-  document.getElementById("setTemperature").click(); 
+  document.getElementById("setHumidity").click(); 
 });
 
 export default {
+  name: "humidity",
   components: {
     BarChart
   },
@@ -42,13 +43,13 @@ export default {
       datacollection: {
         datasets: [
           {
-            label: "Temperature",
-            backgroundColor: "#69caf0"
+            label: "Humidity",
+            backgroundColor: "#fcbe03"
           }
         ]
       },
-      device: this.$store.state.device,
       token: this.$store.state.token,
+      device: this.$store.state.device,
       weather: this.$store.state.weather_conditions
     };
   },
@@ -61,7 +62,7 @@ export default {
         const headers = {
           Authorization: this.token
         };
-        let response = await axios.get("http://localhost:3000/Devices?n=10", {
+        let response = await axios.get("http://localhost:3000/Devices?n=50", {
           headers
         });
         this.device = response.data.devices.find(x => x != "");
@@ -70,45 +71,42 @@ export default {
         console.error(e);
       }
     },
-
     async plot(device) {
       try {
         const headers = {
           Authorization: this.token
         };
         let response = await axios.get(
-          `http://localhost:3000/${device}/temperature?last=50`,
+          `http://localhost:3000/${device}/humidity?last=50`,
           {
             headers
           }
         );
 
-        this.temps = response.data
-          .map(temperature => parseFloat(temperature.temperature))
+        this.hum = response.data
+          .map(humidity => parseFloat(humidity.humidity))
           .reverse();
-        this.temptimes = response.data
+        this.humtimes = response.data
           .map(timestamp =>
             moment(timestamp.timestamp).format("MMMM Do YYYY, h:mm:ss a")
           )
           .reverse();
 
         this.datacollection = {
-          labels: this.temptimes,
+          labels: this.humtimes,
           datasets: [
             {
-              label: "Temperature",
-              backgroundColor: "#69caf0",
-              data: this.temps
+              label: "Humidity",
+              backgroundColor: "#fcbe03",
+              data: this.hum
             }
           ]
         };
 
-        const average =
-          this.temps.reduce((x, y) => x + y, 0) / this.temps.length;
-
-        document.getElementById("tempLabel").style.display = "block";
-        document.getElementById("tempLabel").innerHTML =
-          "Current: " + average.toFixed(2) + " °C";
+        const average = this.hum.reduce((x, y) => x + y, 0) / this.hum.length;
+        document.getElementById("humLabel").style.display = "block";
+        document.getElementById("humLabel").innerHTML =
+          "Current: " + average.toFixed(2) + "%";
       } catch (e) {
         console.error(e);
       }

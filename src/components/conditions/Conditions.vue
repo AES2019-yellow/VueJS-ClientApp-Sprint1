@@ -5,11 +5,11 @@
       variant="danger"
       dismissible
     >Sorry, but the following error occurred: {{errorStr}}</b-alert>
-    <b-row v-if="location && place">
+    <!-- <b-row v-if="location && place">
       <b-col class="text-center">
         <h5>Your current location is: {{place}}</h5>
       </b-col>
-    </b-row>
+    </b-row> -->
     <b-row>
       <b-col v-if="airQuality">
         <h5>Air Quality</h5>

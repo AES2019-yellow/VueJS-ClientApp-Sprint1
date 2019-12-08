@@ -5,10 +5,10 @@
         <b-col class="ml-auto" md="5">
           <p id="CO2Label" style="font-weight: bold"></p>
         </b-col>
-        <b-col class="mx-auto" md="6">
+        <b-col class="mx-auto" md="6" v-show="air_quality">
           <div
             style="font-weight: bold"
-          >Environment: {{air_quality.filter(x => x.Parameter == "carbon monoxide")[0].UGM3}}</div>
+          >Environment: {{air_quality ? air_quality.filter(x => x.Parameter == "carbon monoxide")[0].UGM3 : null}}</div>
         </b-col>
       </b-row>
       <b-row>
@@ -27,7 +27,7 @@ import BarChart from "./BarChart.js";
 import axios from "axios";
 import moment from "moment";
 
-import { EventBus } from '../event-bus.js';
+import { EventBus } from '../../event-bus.js';
 
 // Listen for the clicked event and its payload.
 EventBus.$on('getData', function () {

@@ -1,7 +1,7 @@
-import Plots from './components/Plots'
-import Login from './components/Login'
-import Logout from './components/Logout'
-import Register from './components/Register'
+import Plots from './components/conditions/Plots'
+import Login from './components/authentication/Login'
+import Logout from './components/authentication/Logout'
+import Register from './components/authentication/Register'
 import Home from './components/Menu'
 
 const routes = [

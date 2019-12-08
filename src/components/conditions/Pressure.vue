@@ -5,8 +5,8 @@
         <b-col class="ml-auto" md="5">
           <p id="pressLabel" style="font-weight: bold"></p>
         </b-col>
-        <b-col class="mx-auto" md="6">
-          <div style="font-weight: bold">Environment: {{weather.pressure}} hPa</div>
+        <b-col class="mx-auto" md="6" v-show="weather">
+          <div style="font-weight: bold">Environment: {{weather ? weather.pressure: null}} hPa</div>
         </b-col>
       </b-row>
       <b-row>
@@ -25,7 +25,7 @@ import BarChart from "./BarChart.js";
 import axios from "axios";
 import moment from "moment";
 
-import { EventBus } from '../event-bus.js';
+import { EventBus } from '../../event-bus.js';
 
 // Listen for the clicked event and its payload.
 EventBus.$on('getData', function () {

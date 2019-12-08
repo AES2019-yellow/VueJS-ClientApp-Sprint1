@@ -1,22 +1,30 @@
 <template>
   <b-container id="app" class="container">
     <b-row class="text-center">
+      <b-col class="mx-auto" md="5">
+        <p style="font-weight: bold">Current location: {{place}}</p>
+      </b-col>
+    </b-row>
+    <hr />
+    <b-row class="text-center">
       <b-col class="mr-auto" md="5">
         <temperature />
       </b-col>
       <b-col class="mx-auto" md="5">
         <co2 />
       </b-col>
+    </b-row>
+    <b-row class="text-center">
+      <b-col class="mx-auto" md="5">
+        <b-button @click="emitGlobalClickEvent()" variant="primary" size="md">Get data</b-button>
+      </b-col>
+    </b-row>
+    <b-row class="text-center">
       <b-col class="mr-auto" md="5">
         <pressure />
       </b-col>
       <b-col class="mx-auto" md="5">
         <humidity />
-      </b-col>
-    </b-row>
-    <b-row class="text-center">
-      <b-col class="mx-auto" md="5">
-        <b-button @click="emitGlobalClickEvent()" variant="primary" size="md">Get data</b-button>
       </b-col>
     </b-row>
     <hr />
@@ -37,7 +45,7 @@ import Pressure from "./Pressure";
 import Humidity from "./Humidity";
 import Conditions from "./Conditions";
 
-import { EventBus } from "../event-bus.js";
+import { EventBus } from "../../event-bus.js";
 
 export default {
   name: "app",
@@ -47,6 +55,11 @@ export default {
     Pressure,
     Humidity,
     Conditions
+  },
+  data() {
+    return {
+      place: this.$store.state.place
+    };
   },
   methods: {
     emitGlobalClickEvent() {

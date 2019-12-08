@@ -3,17 +3,17 @@
     <b-container id="app" class="container">
       <b-row class="ml-4">
         <b-col class="ml-auto" md="5">
-          <p id="humLabel" style="font-weight: bold"></p>
+          <p id="tempLabel" style="font-weight: bold"></p>
         </b-col>
-        <b-col class="mx-auto" md="6">
-          <p style="font-weight: bold">Environment: {{weather.humidity}}%</p>
+        <b-col class="mx-auto" md="6" v-show="weather">
+          <p style="font-weight: bold">Environment: {{weather ? weather.temp: null}} °C</p>
         </b-col>
       </b-row>
       <b-row>
         <b-col>
           <bar-chart :chart-data="datacollection"></bar-chart>
-          <div id="setHumidity" @click="fillData()"></div>
-          <!-- <b-button @click="fillData()" variant="primary" size="sm">Get Hum</b-button> -->
+          <div id="setTemperature" @click="fillData()"></div>
+          <!-- <b-button @click="fillData()" variant="primary" size="sm">Get T°</b-button> -->
         </b-col>
       </b-row>
     </b-container>
@@ -25,15 +25,15 @@ import BarChart from "./BarChart.js";
 import axios from "axios";
 import moment from "moment";
 
-import { EventBus } from '../event-bus.js';
+import { EventBus } from '../../event-bus.js'
+;
 
 // Listen for the clicked event and its payload.
 EventBus.$on('getData', function () {
-  document.getElementById("setHumidity").click(); 
+  document.getElementById("setTemperature").click();
 });
 
 export default {
-  name: "humidity",
   components: {
     BarChart
   },
@@ -43,13 +43,13 @@ export default {
       datacollection: {
         datasets: [
           {
-            label: "Humidity",
-            backgroundColor: "#fcbe03"
+            label: "Temperature",
+            backgroundColor: "#69caf0"
           }
         ]
       },
-      token: this.$store.state.token,
       device: this.$store.state.device,
+      token: this.$store.state.token,
       weather: this.$store.state.weather_conditions
     };
   },
@@ -62,7 +62,7 @@ export default {
         const headers = {
           Authorization: this.token
         };
-        let response = await axios.get("http://localhost:3000/Devices?n=50", {
+        let response = await axios.get("http://localhost:3000/Devices?n=10", {
           headers
         });
         this.device = response.data.devices.find(x => x != "");
@@ -71,42 +71,45 @@ export default {
         console.error(e);
       }
     },
+
     async plot(device) {
       try {
         const headers = {
           Authorization: this.token
         };
         let response = await axios.get(
-          `http://localhost:3000/${device}/humidity?last=50`,
+          `http://localhost:3000/${device}/temperature?last=50`,
           {
             headers
           }
         );
 
-        this.hum = response.data
-          .map(humidity => parseFloat(humidity.humidity))
+        this.temps = response.data
+          .map(temperature => parseFloat(temperature.temperature))
           .reverse();
-        this.humtimes = response.data
+        this.temptimes = response.data
           .map(timestamp =>
             moment(timestamp.timestamp).format("MMMM Do YYYY, h:mm:ss a")
           )
           .reverse();
 
         this.datacollection = {
-          labels: this.humtimes,
+          labels: this.temptimes,
           datasets: [
             {
-              label: "Humidity",
-              backgroundColor: "#fcbe03",
-              data: this.hum
+              label: "Temperature",
+              backgroundColor: "#69caf0",
+              data: this.temps
             }
           ]
         };
 
-        const average = this.hum.reduce((x, y) => x + y, 0) / this.hum.length;
-        document.getElementById("humLabel").style.display = "block";
-        document.getElementById("humLabel").innerHTML =
-          "Current: " + average.toFixed(2) + "%";
+        const average =
+          this.temps.reduce((x, y) => x + y, 0) / this.temps.length;
+
+        document.getElementById("tempLabel").style.display = "block";
+        document.getElementById("tempLabel").innerHTML =
+          "Current: " + average.toFixed(2) + " °C";
       } catch (e) {
         console.error(e);
       }

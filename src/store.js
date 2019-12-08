@@ -13,11 +13,15 @@ export default new Vuex.Store({
     weather_conditions: null,
     air_quality: null,
     place: null,
-    device: null
+    device: null, 
+    username: localStorage.getItem("username") || null,
   },
   getters: {
     loggedIn(state) {
-      return state.token !== null && state.token != "Bearer null";
+      return state.token != null && state.token != "Bearer null";
+    },
+    userName(state) {
+      return state.username;
     }
   },
   mutations: {
@@ -38,6 +42,9 @@ export default new Vuex.Store({
     },
     retrievePlace(state, place) {
       state.place = place;
+    },
+    retrieveUsername(state, username) {
+      state.username = username;
     }
   },
   actions: {
@@ -51,9 +58,12 @@ export default new Vuex.Store({
         });
 
         const token = response.data.token;
+        const username = response.data.user.username;
 
         localStorage.setItem("access_token", token);
         context.commit("retrieveToken", token);
+        localStorage.setItem("username", username);
+        context.commit("retrieveUsername", username);
         return response;
       } catch (error) {
         console.log(error);

@@ -51,11 +51,11 @@ export default {
         email: this.user.email,
         password: this.user.password
       });
-      let status = res.status != undefined ? res.status : res.response.status;
-      if (status == "200") {
+      let status = res.data != undefined ? res.data.status : res.response.status;
+      if (status.toString().toLowerCase() == "ok") {
         this.$router.push({ name: "conditions" });
       }
-      else if(status == "404"){
+      else{
         this.error = true;
       }
     }
