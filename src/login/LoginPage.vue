@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="width: -webkit-fill-available;">
         <h2>Login</h2>
         <form @submit.prevent="handleSubmit">
             <div class="form-group">

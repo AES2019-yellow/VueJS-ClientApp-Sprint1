@@ -87,7 +87,7 @@ export default {
       try {
         let response = await axios.get(
           `http://api.aerisapi.com/airquality/${location.coords.latitude},${location.coords.longitude}?client_id=${AERIS_API_KEY}&client_secret=${AERIS_API_SECRET}`
-        );
+        , {crossdomain:true});
         this.airQuality = response.data.response[0].periods[0].pollutants
           .map(item => item)
           .filter(x => x.type != "pm10" && x.type != "pm2.5" && x.type)
@@ -107,7 +107,7 @@ export default {
       try {
         let response = await axios.get(
           `http://api.openweathermap.org/data/2.5/weather?lat=${location.coords.latitude}&lon=${location.coords.longitude}&units=metric&APPID=${OPENWEATHER_API_KEY}`
-        );
+        , {crossdomain:true});
         this.weatherParams = response.data.main;
         this.place = response.data.name;
       } catch (e) {

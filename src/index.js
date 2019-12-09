@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VeeValidate from 'vee-validate';
 import BootstrapVue from "bootstrap-vue";
 import Axios from 'axios';
+import VueResource from 'vue-resource'
 
 import { store } from './_store';
 import { router } from './_helpers';
