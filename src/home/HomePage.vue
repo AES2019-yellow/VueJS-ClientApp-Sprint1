@@ -28,7 +28,7 @@
             <router-link to="/login">Logout</router-link>
         </p>
     </div>
-  </b-container>
+     </b-container>
 </template>
 
 <script>
