@@ -4,8 +4,7 @@ import 'es6-promise/auto'
 
 const user = JSON.parse(localStorage.getItem('user'));
 const state = user
-    ? { status: { loggedIn: true }, user }
-    : { status: {}, user: null };
+    ? { status: { loggedIn: true }, user }  : { status: {}, user: null };
 
 const actions = {
     login({ dispatch, commit }, { email, password }) {
@@ -46,7 +45,7 @@ const actions = {
                     dispatch('alert/error', error, { root: true });
                 }
             );
-    }
+    },
 };
 
 const mutations = {
