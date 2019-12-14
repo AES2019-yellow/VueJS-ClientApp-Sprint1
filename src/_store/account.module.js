@@ -49,6 +49,9 @@ const actions = {
 };
 
 const mutations = {
+    loggedIn(state) {
+      return state.token != null && state.token != "Bearer null";
+    },
     loginRequest(state, user) {
         state.status = { loggingIn: true };
         state.user = user;

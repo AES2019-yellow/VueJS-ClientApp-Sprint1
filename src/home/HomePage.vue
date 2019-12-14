@@ -1,9 +1,6 @@
 <template>
     <b-container id="app" class="container">
           <b-row>
-      <b-col class="text-center">
-        <h5>Automatic Suffocation Detection System</h5>
-      </b-col>
     </b-row>
     <b-row class="text-center">
       <b-col class="mr-auto" md="3">

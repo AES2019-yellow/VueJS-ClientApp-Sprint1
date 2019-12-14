@@ -24,7 +24,20 @@ module.exports = {
         template: './src/index.html'
     })],
     devServer: {
-        historyApiFallback: true
+        historyApiFallback: true,
+        port: 4200,
+        proxy: {
+            '^/': {
+              target: 'http://localhost:8080/',
+              ws: true,
+              changeOrigin: true
+            }
+            ,
+        '/images': {
+            target: 'http://localhost:8080',
+            changeOrigin: true
+        }
+          }
     },
     externals: {
         // global app config object
