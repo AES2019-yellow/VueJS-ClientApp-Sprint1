@@ -1,5 +1,10 @@
 <template>
   <div>
+    <b-alert
+      v-model="error"
+      variant="danger"
+      dismissible
+    > {{error_message}} </b-alert>
     <h2 class="login-heading">Register</h2>
     <b-form action="#" @submit.prevent="register" @reset="reset">
       <b-form-group id="username-label" label="Username:" label-for="username">
@@ -46,6 +51,17 @@
           type="password"
           required
           placeholder="Password"
+          variant="danger"
+        ></b-form-input>
+      </b-form-group>
+
+      <b-form-group id="repassword-label" label="Repeat Password:" label-for="repassword">
+        <b-form-input
+          id="repassword"
+          v-model="repassword"
+          type="password"
+          required
+          placeholder="Repeat Password"
         ></b-form-input>
       </b-form-group>
       <b-button type="submit" variant="primary">Register</b-button>
@@ -60,26 +76,42 @@ export default {
   name: "register",
   data() {
     return {
+      error: false,
+      error_message : "",
       user: {
         username: "",
         firstname: "",
         lastname: "",
         email: "",
         password: ""
-      }
+      },
+      repassword: "",
     };
   },
   methods: {
     async register() {
-      let res = await this.$store.dispatch("register", {
-        username: this.user.username,
-        firstname: this.user.firstname,
-        lastname: this.user.lastname,
-        email: this.user.email,
-        password: this.user.password
-      });
-      if (res.status == "200") {
-        this.$router.push({ name: "login" });
+      if (this.repassword == this.user.password) {
+        let res = await this.$store.dispatch("register", {
+          username: this.user.username,
+          firstname: this.user.firstname,
+          lastname: this.user.lastname,
+          email: this.user.email,
+          password: this.user.password
+        });
+
+        let status =
+          res.data != undefined ? res.data.status : res.response.status;
+        if (status.toString().toLowerCase() == "activated") {
+          this.$router.push({ name: "login" });
+        } else {
+          this.error = true;
+          this.error_message = "There is an account associated to this email";
+        }
+      }
+      else{
+        this.error = true;
+        this.error_message = "The passwords do not match";
+        document.getElementById("password").focus();
       }
     },
     reset() {
@@ -87,7 +119,7 @@ export default {
         (this.user.firstname = ""),
         (this.user.lastname = ""),
         (this.user.email = ""),
-        (this.user.password = "")
+        (this.user.password = "");
     }
   }
 };
