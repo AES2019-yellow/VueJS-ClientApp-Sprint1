@@ -2,13 +2,35 @@
   <div class="small">
     <b-container id="app" class="container">
       <b-row class="ml-4">
-        <b-col class="ml-auto" md="5">
-          <p id="CO2Label" style="font-weight: bold"></p>
+        <b-col class="ml-auto" md="5" v-if="average">
+          <div style="font-weight: bold">
+            Current:
+            <b-badge variant="danger" v-if="average >= co2_thresshold.max_danger">{{average}} ppm</b-badge>
+            <b-badge
+              variant="warning"
+              v-if="average > co2_thresshold.max_warning && average < co2_thresshold.max_danger"
+            >{{average}} ppm</b-badge>
+            <b-badge
+              variant="primary"
+              v-if="average >= co2_thresshold.max_normal && average < co2_thresshold.max_warning"
+            >{{average}} ppm</b-badge>
+            <b-badge
+              variant="info"
+              v-if="average >= co2_thresshold.min_normal && average < co2_thresshold.max_normal"
+            >{{average}} ppm</b-badge>
+            <b-badge variant="success" v-if="average < co2_thresshold.min_normal">{{average}} ppm</b-badge>
+          </div>
         </b-col>
         <b-col class="mx-auto" md="6" v-show="air_quality">
           <div
             style="font-weight: bold"
-          >Environment: {{air_quality ? air_quality.filter(x => x.Parameter == "carbon monoxide")[0].UGM3 : null}}</div>
+          >Environment: {{air_quality ? air_quality.filter(x => x.Parameter == "carbon monoxide")[0].UGM3 : null}} ppm</div>
+        </b-col>
+        <b-col class="mx-auto" md="6" v-if="difference">
+          <p style="font-weight: bold">
+            Difference:
+            <b-badge variant="light">{{difference}} ppm</b-badge>
+          </p>
         </b-col>
       </b-row>
       <b-row>
@@ -27,11 +49,11 @@ import BarChart from "./BarChart.js";
 import axios from "axios";
 import moment from "moment";
 
-import { EventBus } from '../../event-bus.js';
+import { EventBus } from "../../event-bus.js";
 
 // Listen for the clicked event and its payload.
-EventBus.$on('getData', function () {
-  document.getElementById("setAir").click(); 
+EventBus.$on("getData", function() {
+  document.getElementById("setAir").click();
 });
 
 export default {
@@ -50,7 +72,16 @@ export default {
       },
       device: this.$store.state.device,
       token: this.$store.state.token,
-      air_quality: this.$store.state.air_quality
+      air_quality: this.$store.state.air_quality,
+      average: 0,
+      avg_color: "success",
+      difference: 0,
+      co2_thresshold: {
+        min_normal: 350,
+        max_normal: 1000,
+        max_warning: 2000,
+        max_danger: 5000
+      }
     };
   },
   mounted() {
@@ -93,7 +124,7 @@ export default {
           labels: this.co2times,
           datasets: [
             {
-              type: 'bar',
+              type: "bar",
               label: "CO2",
               backgroundColor: "#f87979",
               data: this.co2s
@@ -101,10 +132,18 @@ export default {
           ]
         };
 
-        const average = this.co2s.reduce((x, y) => x + y, 0) / this.co2s.length;
-        document.getElementById("CO2Label").style.display = "block";
-        document.getElementById("CO2Label").innerHTML =
-          "Current: " + average.toFixed(2);
+        this.average = (
+          this.co2s.reduce((x, y) => x + y, 0) / this.co2s.length
+        ).toFixed(2);
+        this.difference = this.air_quality
+          ? (
+              this.average -
+              this.air_quality.filter(x => x.Parameter == "carbon monoxide")[0]
+                .UGM3
+            ).toFixed(2)
+          : 0;
+
+        this.$store.state.current_data.co2 = this.average;
       } catch (e) {
         console.error(e);
       }

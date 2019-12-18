@@ -1,12 +1,38 @@
 <template>
   <div class="small">
     <b-container id="app" class="container">
-      <b-row class="ml-4">
-        <b-col class="ml-auto" md="5">
-          <p id="tempLabel" style="font-weight: bold"></p>
+      <b-row class="ml-3">
+        <b-col class="ml-auto" md="5" v-if="average">
+           <div style="font-weight: bold">
+            Current:
+            <b-badge
+              variant="danger"
+              v-if="average >temperature_thresshold.max_warning"
+            >{{average}} °C</b-badge>
+            <b-badge
+              variant="warning"
+              v-if="average >temperature_thresshold.max_normal && average <=temperature_thresshold.max_warning"
+            >{{average}} °C</b-badge>
+            <b-badge
+              variant="primary"
+              v-if="average >= temperature_thresshold.min_normal && average <=temperature_thresshold.max_normal"
+            >{{average}} °C</b-badge>
+            <b-badge
+              variant="info"
+              v-if="average < temperature_thresshold.min_normal"
+            >{{average}} °C</b-badge>
+          </div>
         </b-col>
-        <b-col class="mx-auto" md="6" v-show="weather">
-          <p style="font-weight: bold">Environment: {{weather ? weather.temp: null}} °C</p>
+        <b-col class="mx-auto" md="6" v-if="weather">
+          <div style="font-weight: bold">
+            Environment: {{weather ? weather.temp: null}} °C
+          </div>
+        </b-col>
+        <b-col class="mx-auto" md="12" v-if="difference">
+          <p style="font-weight: bold">
+            Difference:
+            <b-badge variant="light">{{difference}} °C</b-badge>
+          </p>
         </b-col>
       </b-row>
       <b-row>
@@ -25,11 +51,10 @@ import BarChart from "./BarChart.js";
 import axios from "axios";
 import moment from "moment";
 
-import { EventBus } from '../../event-bus.js'
-;
+import { EventBus } from "../../event-bus.js";
 
 // Listen for the clicked event and its payload.
-EventBus.$on('getData', function () {
+EventBus.$on("getData", function() {
   document.getElementById("setTemperature").click();
 });
 
@@ -50,7 +75,15 @@ export default {
       },
       device: this.$store.state.device,
       token: this.$store.state.token,
-      weather: this.$store.state.weather_conditions
+      weather: this.$store.state.weather_conditions,
+      average: 0,
+      avg_color: "success",
+      difference: 0,
+      temperature_thresshold: {
+        min_normal: 20,
+        max_normal: 26,
+        max_warning: 30
+      }
     };
   },
   mounted() {
@@ -104,12 +137,14 @@ export default {
           ]
         };
 
-        const average =
-          this.temps.reduce((x, y) => x + y, 0) / this.temps.length;
+        this.average = (
+          this.temps.reduce((x, y) => x + y, 0) / this.temps.length
+        ).toFixed(2);
+        this.difference = this.weather
+          ? (this.average - this.weather.temp).toFixed(2)
+          : 0;
 
-        document.getElementById("tempLabel").style.display = "block";
-        document.getElementById("tempLabel").innerHTML =
-          "Current: " + average.toFixed(2) + " °C";
+        this.$store.state.current_data.temp = this.average;
       } catch (e) {
         console.error(e);
       }

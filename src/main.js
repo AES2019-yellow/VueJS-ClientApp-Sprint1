@@ -5,8 +5,8 @@ import BootstrapVue from "bootstrap-vue";
 
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
-import store from './store'
-import routes from './routes'
+import store from './store';
+import routes from './routes';
 
 Vue.use(BootstrapVue);
 Vue.use(VueRouter);

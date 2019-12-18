@@ -21,17 +21,17 @@
         <b-list-group>
           <b-list-group-item class="d-flex justify-content-between align-items-center">
             Temperature
-            <b-badge variant="primary">{{weatherParams.temp}} °C</b-badge>
+            <b-badge variant="light">{{weatherParams.temp}} °C</b-badge>
           </b-list-group-item>
 
           <b-list-group-item class="d-flex justify-content-between align-items-center">
             Pressure
-            <b-badge variant="success">{{weatherParams.pressure}} hPa</b-badge>
+            <b-badge variant="light">{{weatherParams.pressure}} hPa</b-badge>
           </b-list-group-item>
 
           <b-list-group-item class="d-flex justify-content-between align-items-center">
             Humidity
-            <b-badge variant="warning">{{weatherParams.humidity}} %</b-badge>
+            <b-badge variant="light">{{weatherParams.humidity}} %</b-badge>
           </b-list-group-item>
         </b-list-group>
         <b-link href="http://api.openweathermap.org">http://api.openweathermap.org</b-link>

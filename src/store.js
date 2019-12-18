@@ -15,6 +15,11 @@ export default new Vuex.Store({
     place: null,
     device: null, 
     username: localStorage.getItem("username") || null,
+    current_data: {
+      temp:"",
+      co2:"",
+      hum:""
+    }
   },
   getters: {
     loggedIn(state) {

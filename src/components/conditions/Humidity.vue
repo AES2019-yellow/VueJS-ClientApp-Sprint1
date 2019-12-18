@@ -1,12 +1,21 @@
 <template>
   <div class="small">
     <b-container id="app" class="container">
-      <b-row class="ml-4">
-        <b-col class="ml-auto" md="5">
-          <p id="humLabel" style="font-weight: bold"></p>
+      <b-row class="ml-3">
+        <b-col class="ml-auto" md="5" v-if="average">
+          <div style="font-weight: bold">
+            Current:
+            <b-badge variant="light">{{average}} %</b-badge>
+          </div>
         </b-col>
         <b-col class="mx-auto" md="6" v-show="weather">
-          <p style="font-weight: bold">Environment: {{weather ? weather.humidity: null}}%</p>
+          <div style="font-weight: bold">Environment: {{weather ? weather.humidity: null}} %</div>
+        </b-col>
+        <b-col class="ml-auto" md="12" v-if="difference">
+          <p style="font-weight: bold">
+            Difference:
+            <b-badge variant="light">{{difference}} %</b-badge>
+          </p>
         </b-col>
       </b-row>
       <b-row>
@@ -25,11 +34,11 @@ import BarChart from "./BarChart.js";
 import axios from "axios";
 import moment from "moment";
 
-import { EventBus } from '../../event-bus.js';
+import { EventBus } from "../../event-bus.js";
 
 // Listen for the clicked event and its payload.
-EventBus.$on('getData', function () {
-  document.getElementById("setHumidity").click(); 
+EventBus.$on("getData", function() {
+  document.getElementById("setHumidity").click();
 });
 
 export default {
@@ -50,7 +59,9 @@ export default {
       },
       token: this.$store.state.token,
       device: this.$store.state.device,
-      weather: this.$store.state.weather_conditions
+      weather: this.$store.state.weather_conditions,
+      average: 0,
+      difference: 0
     };
   },
   mounted() {
@@ -103,10 +114,14 @@ export default {
           ]
         };
 
-        const average = this.hum.reduce((x, y) => x + y, 0) / this.hum.length;
-        document.getElementById("humLabel").style.display = "block";
-        document.getElementById("humLabel").innerHTML =
-          "Current: " + average.toFixed(2) + "%";
+        this.average = (
+          this.hum.reduce((x, y) => x + y, 0) / this.hum.length
+        ).toFixed(2);
+        this.difference = this.weather
+          ? (this.average - this.weather.humidity).toFixed(2)
+          : 0;
+
+        this.$store.state.current_data.hum = this.average;
       } catch (e) {
         console.error(e);
       }

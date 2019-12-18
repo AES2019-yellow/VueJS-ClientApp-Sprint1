@@ -2,11 +2,20 @@
   <div class="small">
     <b-container id="app" class="container">
       <b-row class="ml-3">
-        <b-col class="ml-auto" md="5">
-          <p id="pressLabel" style="font-weight: bold"></p>
+        <b-col class="ml-auto" md="5" v-if="average">
+          <div style="font-weight: bold">
+            Current:
+            <b-badge variant="light">{{average}} hPa</b-badge>
+          </div>
         </b-col>
         <b-col class="mx-auto" md="6" v-show="weather">
           <div style="font-weight: bold">Environment: {{weather ? weather.pressure: null}} hPa</div>
+        </b-col>
+        <b-col class="ml-auto" md="12" v-if="difference">
+          <p style="font-weight: bold">
+            Difference:
+            <b-badge variant="light">{{difference}} hPa</b-badge>
+          </p>
         </b-col>
       </b-row>
       <b-row>
@@ -25,11 +34,11 @@ import BarChart from "./BarChart.js";
 import axios from "axios";
 import moment from "moment";
 
-import { EventBus } from '../../event-bus.js';
+import { EventBus } from "../../event-bus.js";
 
 // Listen for the clicked event and its payload.
-EventBus.$on('getData', function () {
-  document.getElementById("setPressure").click(); 
+EventBus.$on("getData", function() {
+  document.getElementById("setPressure").click();
 });
 
 export default {
@@ -50,7 +59,9 @@ export default {
       },
       token: this.$store.state.token,
       device: this.$store.state.device,
-      weather: this.$store.state.weather_conditions
+      weather: this.$store.state.weather_conditions,
+      average: 0,
+      difference: 0
     };
   },
   mounted() {
@@ -103,11 +114,12 @@ export default {
           ]
         };
 
-        const average =
-          this.press.reduce((x, y) => x + y, 0) / this.press.length;
-        document.getElementById("pressLabel").style.display = "block";
-        document.getElementById("pressLabel").innerHTML =
-          "Current: " + average.toFixed(2) + " hPa";
+        this.average = (
+          this.press.reduce((x, y) => x + y, 0) / this.press.length
+        ).toFixed(2);
+        this.difference = this.weather
+          ? (this.average - this.weather.pressure).toFixed(2)
+          : 0;
       } catch (e) {
         console.error(e);
       }

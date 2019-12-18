@@ -55,10 +55,10 @@
         ></b-form-input>
       </b-form-group>
 
-      <b-form-group id="repassword-label" label="Repeat Password:" label-for="repassword">
+      <b-form-group id="repeat_password-label" label="Repeat Password:" label-for="repeat_password">
         <b-form-input
-          id="repassword"
-          v-model="repassword"
+          id="repeat_password"
+          v-model="user.repeat_password"
           type="password"
           required
           placeholder="Repeat Password"
@@ -83,14 +83,14 @@ export default {
         firstname: "",
         lastname: "",
         email: "",
-        password: ""
-      },
-      repassword: "",
+        password: "",
+        repeat_password: ""
+      }
     };
   },
   methods: {
     async register() {
-      if (this.repassword == this.user.password) {
+      if (this.user.repeat_password == this.user.password) {
         let res = await this.$store.dispatch("register", {
           username: this.user.username,
           firstname: this.user.firstname,
