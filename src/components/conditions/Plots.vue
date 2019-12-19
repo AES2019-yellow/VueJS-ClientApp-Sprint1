@@ -1,5 +1,6 @@
 <template>
   <b-container id="app" class="container">
+    <b-alert v-model="lowcaution" variant="info" dismissible>{{error_message}}</b-alert>
     <b-alert v-model="warning" variant="warning" dismissible>{{error_message}}</b-alert>
     <b-alert v-model="danger" variant="danger" dismissible>{{error_message}}</b-alert>
     <b-row class="text-center">
@@ -62,6 +63,7 @@ export default {
     return {
       place: this.$store.state.place,
       weather: this.$store.state.weather_conditions,
+      lowcaution: false,
       warning: false,
       danger: false,
       error_message: "",
@@ -76,18 +78,26 @@ export default {
       // Send the event on a channel (i-got-clicked) with a payload (the click count.)
       EventBus.$emit("getData");
       if (this.weather) {
-        if (this.current_data.temp > 27 && this.current_data.hum > 45) {
-          this.warning = true;
+        if (this.current_data.temp > 27 && this.current_data.hum > 45 ) {
+          this.lowcaution = true;
+          this.warning = false;
+          this.danger = false;
           this.error_message = "Warning! Low Alert of Suffocation";
         }
-        if (this.current_data.temp > 33 && this.current_data.hum > 45) {
+        if (this.current_data.temp > 31 && this.current_data.hum > 45 || 
+        this.current_data.temp > 27 && this.current_data.hum > 75
+        || this.current_data.co2 > 2000) {
           this.warning = true;
+          this.lowcaution = false;
           this.danger = false;
           this.error_message = "Warning! Medium Alert of Suffocation";
         }
-        if (this.current_data.temp > 40 && this.current_data.hum > 45) {
+        if (this.current_data.temp > 40 && this.current_data.hum > 45 ||
+        this.current_data.temp > 31 && this.current_data.hum > 75
+        || this.current_data.co2 > 5000) {
           this.danger = true;
           this.warning = false;
+          this.lowcaution = false;
           this.error_message = "Danger! High Alert of Suffocation";
         }
       }
