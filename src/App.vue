@@ -1,53 +1,29 @@
 <template>
-  <b-container id="app" class="container">
-    <b-row>
-      <b-col class="text-center">
-        <h2>Automatic Suffocation Detection System - Sprint2</h2>
+    <b-container id="app" class="container">
+    <b-row >
+      <b-col pull-left>
+        <p style="font-weight: bold" v-if="loggedIn">Hello {{username}}</p>
+      </b-col>      
+      <b-col class="text-right" pull-right>
+        <router-link :to="{ name: 'logout' }" v-if="loggedIn" @click="logout()" style="font-weight: bold">Logout</router-link>
       </b-col>
+      <b-col class="text-center" md = "12">
+        <h2>Automatic Suffocation Detection System</h2>
+      </b-col>      
     </b-row>
-    <b-row class="text-center">
-      <b-col class="mr-auto" md="3">
-        <temperature />
-      </b-col>
-      <b-col class="mx-auto" md="3">
-        <co2 />
-      </b-col>
-      <b-col class="ml-auto" md="3">
-        <pressure />
-      </b-col>
-    </b-row>
-    <hr />
-    <b-row>
-      <b-col>
-        <conditions />
-      </b-col>
-    </b-row>
+    <router-view></router-view>
   </b-container>
 </template>
 
 <script>
-import Temperature from "./components/Temperature.vue";
-import Co2 from "./components/Co2";
-import Pressure from "./components/Pressure";
-import Conditions from "./components/Conditions";
-
 export default {
-  name: "app",
-  components: {
-    Temperature,
-    Co2,
-    Pressure,
-    Conditions
+  computed: {
+    loggedIn() {
+      return this.$store.getters.loggedIn
+    }, 
+    username(){
+      return this.$store.getters.userName
+    }
   }
-};
-</script>
-
-<style>
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  margin-top: 30px;
-  max-width: auto;
 }
-</style>
+</script>
